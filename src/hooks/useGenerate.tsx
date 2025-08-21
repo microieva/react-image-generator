@@ -28,7 +28,8 @@ export const useGenerate = () => {
       // };
 
       const response = await axios.post<any>(
-        'http://127.0.0.1:8000/generate',
+        'http://135.181.63.187:8000/generate',
+        //'http://127.0.0.1:8000/generate',
         //`${process.env.LOCAL_SERVER}/generate`,
         {
           prompt: prompt.trim(),
