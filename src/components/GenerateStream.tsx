@@ -34,6 +34,7 @@ const GenerateStream: React.FC = () => {
     if (!prompt.trim()) return;
     
     await generate(prompt.trim());
+    setPrompt(''); 
   };
 
   return (
@@ -44,7 +45,7 @@ const GenerateStream: React.FC = () => {
         startIcon={<ArrowBackIcon />}
         onClick={handleGoBack}
       >
-        Go Back to Home
+        Back 
       </Button>
     <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 4 }}>
        <Typography variant="h4" component="h1" gutterBottom>
@@ -103,12 +104,6 @@ const GenerateStream: React.FC = () => {
         {data && (
           <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 4 }}>
           <Box sx={{ mt: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Generated Image:
-            </Typography>
-            <Typography variant="h6" gutterBottom>
-              data
-            </Typography>
 
             {data.image && <img 
               src={data.image} 
@@ -124,7 +119,7 @@ const GenerateStream: React.FC = () => {
               variant="outlined" 
               sx={{ mt: 2 }}
             >
-              Generate Another
+              Reset
             </Button>
           </Box>
           </Paper>
