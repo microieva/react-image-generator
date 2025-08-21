@@ -1,4 +1,3 @@
-//import 'dotenv/config'; // Ensure environment variables are loaded
 import { useState } from 'react';
 import axios from 'axios';
 //import type { GenerationResponse } from '../types/api';
@@ -29,8 +28,6 @@ export const useGenerate = () => {
 
       const response = await axios.post<any>(
         'http://135.181.63.187:8000/generate',
-        //'http://127.0.0.1:8000/generate',
-        //`${process.env.LOCAL_SERVER}/generate`,
         {
           prompt: prompt.trim(),
           steps: 20,
@@ -44,7 +41,6 @@ export const useGenerate = () => {
         }
       );
       
-      console.log('Response:', response);
       //setProgress(response.data.progress || 0);
       setData(response.data);
       return response.data;
