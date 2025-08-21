@@ -14,6 +14,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const GenerateStream: React.FC = () => {
   const [prompt, setPrompt] = React.useState('');
+
   const { 
     loading, 
     //progress, 
@@ -34,7 +35,16 @@ const GenerateStream: React.FC = () => {
     if (!prompt.trim()) return;
     
     await generate(prompt.trim());
-    setPrompt(''); 
+  };
+  const handleDownload = () => {
+    if (data && data.image) {
+      const link = document.createElement('a');
+      link.href = data.image;
+      link.download = 'generated-image.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   return (
@@ -47,7 +57,7 @@ const GenerateStream: React.FC = () => {
       >
         Back 
       </Button>
-    <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 4 }}>
+    <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
        <Typography variant="h4" component="h1" gutterBottom>
         Image Generator
       </Typography>
@@ -102,9 +112,23 @@ const GenerateStream: React.FC = () => {
           </Paper>
         )}
         {data && (
-          <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 4 }}>
-          <Box sx={{ mt: 3 }}>
-
+          <Paper elevation={3} sx={{ p: 3, pt:1, maxWidth: 600, mx: 'auto', my: 4 }}>
+            <Box sx={{ my: 3, display: 'flex', flexDirection: 'row', w: '100%', justifyContent: 'space-between' }}>
+            <Button 
+              onClick={reset}
+              variant="outlined" 
+              sx={{ mt: 2 }}
+            >
+              Reset
+            </Button>
+            <Button 
+              onClick={handleDownload}
+              variant="outlined" 
+              sx={{ mt: 2 }}
+            >
+              Download
+            </Button>
+          </Box>
             {data.image && <img 
               src={data.image} 
               alt="Generated" 
@@ -114,14 +138,7 @@ const GenerateStream: React.FC = () => {
                 boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
               }} 
             />}
-            <Button 
-              onClick={reset}
-              variant="outlined" 
-              sx={{ mt: 2 }}
-            >
-              Reset
-            </Button>
-          </Box>
+          
           </Paper>
         )}
     </>
