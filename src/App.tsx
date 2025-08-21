@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import Generate from './components/Generate';
+import GenerateStream from './components/GenerateStream';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -51,7 +51,7 @@ const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/generate" element={<Generate />} />
+      <Route path="/generate" element={<GenerateStream />} />
     </Routes>
   );
 };

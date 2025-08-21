@@ -1,20 +1,22 @@
+//import 'dotenv/config'; // Ensure environment variables are loaded
 import { useState } from 'react';
 import axios from 'axios';
 //import type { GenerationResponse } from '../types/api';
 
 
 export const useGenerate = () => {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [data, setData] = useState<any | null>(null);
+  //const [progress, setProgress] = useState<number>(0);
 
-  const generateContent = async (prompt: string) => {
+  const generate = async (prompt: string) => {
     if (!prompt.trim()) {
       setError('Prompt cannot be empty');
       return null;
     }
 
-    //setLoading(true);
+    setLoading(true);
     setError('');
     setData(null);
 
@@ -26,20 +28,23 @@ export const useGenerate = () => {
       // };
 
       const response = await axios.post<any>(
-        'http://0.0.0.0:8000/generate',
+        'http://127.0.0.1:8000/generate',
+        //`${process.env.LOCAL_SERVER}/generate`,
+        {
+          prompt: prompt.trim(),
+          steps: 20,
+          guidance_scale: 7.5
+        },
         {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  
-            },
-            body: JSON.stringify({
-                prompt: prompt.trim(),
-                steps: 20,
-                guidance_scale: 7.5
-            })
+            }
         }
       );
+      
       console.log('Response:', response);
+      //setProgress(response.data.progress || 0);
       setData(response.data);
       return response.data;
     } catch (err: any) {
@@ -52,10 +57,13 @@ export const useGenerate = () => {
   };
 
   return {
-    generateContent,
+    generate,
     loading,
     error,
     data,
+    //progress,
+    //image,
+    //status,
     reset: () => {
       setError('');
       setData(null);
