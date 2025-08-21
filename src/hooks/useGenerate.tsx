@@ -27,7 +27,8 @@ export const useGenerate = () => {
       // };
 
       const response = await axios.post<any>(
-        'http://135.181.63.187:8000/generate',
+        //'http://135.181.63.187:8000/generate',
+        '/api/generate',
         {
           prompt: prompt.trim(),
           steps: 20,
