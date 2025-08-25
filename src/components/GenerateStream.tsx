@@ -79,7 +79,7 @@ const GenerateStream: React.FC = () => {
         <Button
           type="submit"
           variant="contained"
-          disabled={loading || !prompt.trim()}
+          disabled={loading || !prompt.trim() || (data && data.image)}
           fullWidth
           sx={{ mt: 2, mb: 2 }}
         >

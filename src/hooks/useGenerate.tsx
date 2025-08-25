@@ -65,6 +65,7 @@ export const useGenerate = () => {
     reset: () => {
       setError('');
       setData(null);
+      setLoading(false);
     },
   };
 };
