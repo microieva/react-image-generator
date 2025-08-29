@@ -28,7 +28,7 @@ const Home: React.FC = () => {
           Welcome to My App
         </Typography>
         <Typography variant="body1" sx={{ mb: 4 }}>
-          This is the home page of your React application with routing setup.
+          This is a tiny image generator buildt with React client and FastAPI server and Stable Diffusion2.1
         </Typography>
         <Button
           variant="contained"
@@ -40,7 +40,7 @@ const Home: React.FC = () => {
             fontSize: '1.1rem'
           }}
         >
-          Go to Generate Page
+          Go to Generate
         </Button>
       </Box>
     </Container>
