@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import axios, { type CancelTokenSource } from 'axios';
 import type { GenerationResult, SSEProgressEvent } from '../types/api';
+import env from '../utils/env';
 
 interface GenerationState {
     loading: boolean;
@@ -62,7 +63,7 @@ export const useCancellableGeneration = () => {
 
         try {
             const response = await axios.post(
-                'http://127.0.0.1:8000/generate',
+                `${env.apiBaseUrl}/generate`,
                 { 
                     prompt,
                     steps: 20,
@@ -124,7 +125,7 @@ export const useCancellableGeneration = () => {
 
         if (task_id) {
             return new Promise((resolve) => {      
-                eventSourceRef.current = new EventSource(`http://127.0.0.1:8000/generate-stream/${task_id}`);
+                eventSourceRef.current = new EventSource(`${env.apiBaseUrl}/generate-stream/${task_id}`);
     
                 eventSourceRef.current.onmessage = (event) => {
                     try {
@@ -200,7 +201,7 @@ export const useCancellableGeneration = () => {
         }
         
         try {
-            const response = await axios.post('http://127.0.0.1:8000/cancel-generation', { 
+            const response = await axios.post(`${env.apiBaseUrl}/generate-stream`, { 
                 task_id: state.taskId 
             });
             if (response.status === 200 && response.data.status === 'success') {
