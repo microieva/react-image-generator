@@ -7,21 +7,6 @@ export interface GenerationRequest {
   presence_penalty?: number
 }
 
-// export interface GenerationResponse {
-//   success: boolean
-//   data?: {
-//     generated_text: string
-//     id: string
-//     timestamp: string
-//     model?: string
-//     usage?: {
-//       prompt_tokens: number
-//       completion_tokens: number
-//       total_tokens: number
-//     }
-//   }
-//   error?: string
-// }
 export interface GenerationResponse {
   status: string
   taskId: string

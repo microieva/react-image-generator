@@ -15,22 +15,18 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useCancellableGeneration } from '../hooks/useCancellableGeneration';
 import type { GenerationResult } from '../types/api';
-//import type { GenerationResponse, SSEProgressEvent } from '../types/api';
 
 const GenerateStream: React.FC = () => {
   const [prompt, setPrompt] = React.useState('');
   const [generatedImage, setGeneratedImage] = React.useState<string | null>(null);
-  //const [currentTaskId, setCurrentTaskId] = React.useState<string | null>(null);
   const [isSubmitDisabled, setIsSubmitDisabled] = React.useState<boolean>(false);
   const {
     generate,
     cancel,
-    getprogress,
     reset: resetGeneration,
     loading,
     error,
     progress,
-    //taskId,
     cancelled,
     status,
   } = useCancellableGeneration();
@@ -161,7 +157,7 @@ const GenerateStream: React.FC = () => {
               sx={{ height: 8, borderRadius: 4 }}
             />
             <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-              {getprogress()}% complete
+              {progress}% complete
             </Typography>
           </Box>
         </Paper>

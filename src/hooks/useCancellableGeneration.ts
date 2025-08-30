@@ -24,14 +24,7 @@ export const useCancellableGeneration = () => {
 
     const eventSourceRef = useRef<EventSource | null>(null);
     const cancelTokenSource = useRef<CancelTokenSource | null>(null);
-    const progressRef = useRef(0);
     
-    // Keep ref in sync with state
-    useEffect(() => {
-        progressRef.current = state.progress;
-    }, [state.progress]);
-
-    // Cleanup on unmount
     useEffect(() => {
         return () => {
             if (eventSourceRef.current) {
@@ -41,7 +34,6 @@ export const useCancellableGeneration = () => {
     }, []);
 
     const generate = useCallback(async (prompt: string): Promise<string | null> => {
-        // Cleanup previous connections
         if (eventSourceRef.current) {
             eventSourceRef.current.close();
         }
@@ -130,7 +122,7 @@ export const useCancellableGeneration = () => {
                 eventSourceRef.current.onmessage = (event) => {
                     try {
                         const data: SSEProgressEvent = JSON.parse(event.data);
-                        progressRef.current = data.progress;
+
                         if (Math.abs(data.progress - state.progress) >= 5 || data.status !== state.status) {
                             setState(prev => {
                                 if (prev.progress === data.progress) {
@@ -246,19 +238,10 @@ export const useCancellableGeneration = () => {
         });
     }, []);
 
-    // const getprogress = useCallback(() => {
-    //     return state.progress;
-    // }, [state.progress]);
-
-    const getprogress = useCallback(() => {
-        return progressRef.current;
-    }, []);
-
     return {
         generate: generateWithSSE, 
         cancel,
         reset,
-        getprogress, 
         ...state,
     };
 };
