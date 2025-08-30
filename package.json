@@ -5,12 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode development",
-    "dev:open": "vite --mode development --open", 
+    "dev:open": "vite --mode development --open",
     "build": "tsc -b && vite build --mode production",
     "lint": "eslint .",
     "preview": "vite preview --mode production",
     "build:staging": "build --mode staging",
-    "dev:staging": "vite --mode staging"
+    "dev:staging": "vite --mode staging",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:headed": "cypress run --headed",
+    "cypress:run:record": "cypress run --record --key your-record-key",
+    "test:e2e": "start-server-and-test 'npm start' http://localhost:3000 'npm run cypress:run'"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -18,25 +23,28 @@
     "@mui/icons-material": "^7.3.1",
     "@mui/material": "^7.3.1",
     "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-react": "^4.7.0",
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
     "framer-motion": "^12.23.12",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.8.1"
+    "react-router-dom": "^7.8.1",
+    "vite": "^6.3.5"
   },
   "devDependencies": {
+    "@cypress/webpack-batteries-included-preprocessor": "^4.0.2",
+    "@cypress/webpack-preprocessor": "^7.0.1",
     "@eslint/js": "^9.33.0",
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^5.0.0",
+    "cypress": "^15.0.0",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
     "typescript": "~5.8.3",
-    "typescript-eslint": "^8.39.1",
-    "vite": "^7.1.2"
+    "typescript-eslint": "^8.39.1"
   }
 }
