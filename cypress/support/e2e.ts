@@ -14,4 +14,20 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import 'cypress-real-events';
+import '@testing-library/cypress/add-commands';
 import './commands'
+import '../../src/types/api'
+
+// Additional global configuration
+// beforeEach(() => {
+//   // Global beforeEach if needed
+// });
+
+// afterEach(() => {
+//   // Clean up after each test
+//   cy.window().then((win) => {
+//     win.sessionStorage.clear();
+//     win.localStorage.clear();
+//   });
+// });

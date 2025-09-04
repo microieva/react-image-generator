@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   TextField,
   Button,
@@ -8,18 +8,22 @@ import {
   Alert,
   Paper
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import Container from '@mui/material/Container';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CancelIcon from '@mui/icons-material/Cancel';
+import ReplayIcon from '@mui/icons-material/Replay';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useCancellableGeneration } from '../hooks/useCancellableGeneration';
 import type { GenerationResult } from '../types/api';
 
 const GenerateStream: React.FC = () => {
-  const [prompt, setPrompt] = React.useState('');
-  const [generatedImage, setGeneratedImage] = React.useState<string | null>(null);
-  const [isSubmitDisabled, setIsSubmitDisabled] = React.useState<boolean>(false);
+  const { id } = useParams<{ id?: string }>();
+  const [prompt, setPrompt] = useState('');
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(false);
+
   const {
     generate,
     cancel,
@@ -29,7 +33,8 @@ const GenerateStream: React.FC = () => {
     progress,
     cancelled,
     status,
-  } = useCancellableGeneration();
+    prompt_str
+  } = useCancellableGeneration(id);
 
   const navigate = useNavigate();
 
@@ -37,8 +42,13 @@ const GenerateStream: React.FC = () => {
     setIsSubmitDisabled(loading || !prompt.trim())
   }, [loading, prompt]);
 
+  useEffect( ()=> { 
+    id && prompt_str && setPrompt(prompt_str);
+  }, [id, prompt_str])
+
   const handleGoBack = () => {
-    navigate('/');
+    !id && navigate('/');
+    id && navigate('/tasks')
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -78,22 +88,60 @@ const GenerateStream: React.FC = () => {
     }
   };
 
+  const handleRetry = () => {
+
+  }
+
   return (
-    <>
+    <Container 
+      maxWidth="sm" 
+      data-testid="generate-container"
+      role="main" 
+      aria-label="Generate section"
+      aria-labelledby="generate-title" 
+      sx={{minHeight: '100vh'}}
+    >
       <Button
         sx={{ p: 2, m: 4 }}
         variant="contained"
         startIcon={<ArrowBackIcon />}
         onClick={handleGoBack}
+        data-testid="generate-go-back-button"
+        aria-label="Go back to welcome page" 
+        aria-describedby="generate-description" 
+        role="button" 
+        tabIndex={0}
+        onKeyUp={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            handleGoBack();
+          }
+        }}
       >
         Back 
       </Button>
       
-      <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+      <Paper 
+        elevation={3} 
+        sx={{ p: 3, maxWidth: 600, mx: 'auto' }} 
+        data-testid="generate-paper"
+         aria-describedby="generate-description" 
+         aria-live="polite">
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          gutterBottom
+          data-testid="generate-title"
+          id="generate-title" 
+        >
           Image Generator
         </Typography>
-        <Typography variant="body1" sx={{ mb: 3 }}>
+        <Typography 
+          variant="body1" 
+          sx={{ mb: 3 }}
+          data-testid="generate-description"
+          id="generate-description" 
+          aria-live="polite" 
+        >
           Welcome! This is your dedicated space for content generation.
         </Typography>
         
@@ -108,37 +156,83 @@ const GenerateStream: React.FC = () => {
             disabled={loading}
             multiline
             rows={3}
+            role="textbox"
+            data-testid="generate-prompt-input"
+            aria-label="Image prompt input, describe your image"
+            aria-required="true"
+            required
+            autoFocus
+            tabIndex={0}
+            onKeyUp={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey && !isSubmitDisabled) {
+                handleSubmit(e);
+              }
+            }}
           />
-          
           <Box sx={{ display: 'flex', gap: 2, mt: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-            <Button
+            {!error && <Button
               type="submit"
               variant="contained"
               disabled={isSubmitDisabled}
               fullWidth
+              data-testid="generate-submit-button"
+              aria-label="Start generation"
+              role="button"
+              aria-describedby="generate-description" 
             >
               {loading ? `${status}...` : 'Generate Image'}
-            </Button>
+            </Button>}
             {loading &&
               <Button
                 variant="outlined"
+                data-testid="generate-cancel-button"
                 color="error"
                 onClick={handleCancel}
                 startIcon={<CancelIcon />}
                 fullWidth
+                disabled={status === 'cancelling'}
+                aria-describedby="generate-description" 
+                aria-label="Cancel generation"
+                tabIndex={0}
+                onKeyUp={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleCancel();
+                  }
+                }}
               >
                 Cancel
+              </Button> }
+            {!cancelled && error &&
+              <Button
+                type="submit"
+                role="button"
+                variant="outlined"
+                data-testid="generate-retry-button"
+                aria-describedby="generate-description" 
+                color="error"
+                onClick={handleSubmit}
+                startIcon={<ReplayIcon />}
+                fullWidth
+                aria-label="Retry generation"
+                tabIndex={0}
+                onKeyUp={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey && !isSubmitDisabled) {
+                    handleSubmit(e);
+                  }
+                }}
+              >
+                Retry
               </Button> }
           </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
+            <Alert severity="error" sx={{ mt: 2 }} role="alert" data-testid="alert">
               {error}
             </Alert>
           )}
 
           {cancelled && (
-            <Alert severity="info" sx={{ mt: 2 }}>
+            <Alert severity="info" sx={{ mt: 2 }} role="info" data-testid="info">
               Generation was cancelled. You can start a new one.
             </Alert>
           )}
@@ -152,9 +246,15 @@ const GenerateStream: React.FC = () => {
               Generating your image, please wait...
             </Typography>
             <LinearProgress 
+              role="progress-bar"
               variant="determinate" 
               value={progress} 
               sx={{ height: 8, borderRadius: 4 }}
+              aria-valuenow={progress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              data-testid="progress-bar"
+              data-cy="progress-bar"
             />
             <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
               {progress}% complete
@@ -176,6 +276,7 @@ const GenerateStream: React.FC = () => {
             <Button 
               onClick={handleReset}
               variant="outlined"
+              data-testid="generate-reset-button"
               startIcon={<RefreshIcon />}
               sx={{ flex: { xs: 1, sm: 'none' } }}
             >
@@ -214,7 +315,7 @@ const GenerateStream: React.FC = () => {
           </Typography>
         </Paper>
       )}
-    </>
+    </Container>
   );
 };
 

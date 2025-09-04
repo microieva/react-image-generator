@@ -1,9 +1,16 @@
-import { defineConfig } from "cypress";
+import { defineConfig } from 'cypress';
+import 'dotenv/config';
 
 export default defineConfig({
   e2e: {
+    baseUrl: process.env.LOCALHOST_BASE_URL || 'http://localhost:3001',
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      return config;
     },
+    //watchForFileChanges: false,
   },
+  viewportWidth: 1280,
+  viewportHeight: 720,
+  video: false,
+  screenshotOnRunFailure: true
 });
