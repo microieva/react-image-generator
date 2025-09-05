@@ -1,11 +1,9 @@
 declare namespace Cypress {
   interface Chainable {
-    // // Core commands
     visitWelcomePage(): Chainable<void>;
     visitGeneratePage(): Chainable<void>;
     getByTestId(testId: string): Chainable<JQuery<HTMLElement>>;
     
-    // // Assertion commands
     assertWelcomePageComplete(): Chainable<void>;
     assertWelcomeContainerVisible(): Chainable<void>;
     assertWelcomeLayoutCorrect(): Chainable<void>;
@@ -17,7 +15,6 @@ declare namespace Cypress {
     assertNavigationToGenerate(): Chainable<void>;
     assertNavigationBackToWelcome(): Chainable<void>;
     assertRetryButtonVisible(): Chainable<void>;
-
     assertGeneratePageInitialState(): Chainable<void>;
     assertGenerateContainerVisible(): Chainable<void>;
     assertGenerateLayoutCorrect():Chainable<void>;
@@ -27,25 +24,24 @@ declare namespace Cypress {
     assertGenerateCancelButtonVisible(shouldBeVisible?: boolean): Chainable<void>;
     assertGenerateProgressBarVisible(shouldBeVisible?: boolean): Chainable<void>;
     assertGenerateResetButtonVisible(shouldBeVisible?: boolean): Chainable<void>;
+    assertWelcomePageAccessible(): Chainable<void>;
+    assertGeneratePageAccessible(): Chainable<void>;
     
-    // // Action commands
     clickGenerateButton(): Chainable<void>;
     clickGoToButton(): Chainable<void>;
     clickGoBackButton(): Chainable<void>;
     clickResetButton(): Chainable<void>;
     clickCancelButton(): Chainable<void>;
     clickRetryButton(): Chainable<void>;
+    typePrompt(prompt: string): Chainable<void>;
+    clearPrompt(): Chainable<void>;
     
-    // // Accessibility commands
-    assertWelcomePageAccessible(): Chainable<void>;
     testKeyboardNavigation(options?: {
       testAllKeys?: boolean;
       testFocusOrder?: boolean;
     }): Chainable<void>;
-    typePrompt(prompt: string): Chainable<void>;
-    clearPrompt(): Chainable<void>;
 
-    assertGeneratePageAccessible(): Chainable<void>;
+
     testKeyboardNavigationBack(options?: {
       testAllKeys?: boolean;
       testFocusOrder?: boolean;

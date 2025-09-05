@@ -23,7 +23,6 @@ import axios from 'axios';
 import env from '../utils/env';
 import { useDateFormatting } from '../hooks/useDateFormatting';
 import { Task } from '../types/api';
-import { useTasksActions } from '../hooks/useTasksActions';
 
 export const Tasks: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -31,8 +30,6 @@ export const Tasks: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [cancellingIds, setCancellingIds] = useState<string[]>([]);
   const navigate = useNavigate();
-
-  //const {getStreams} = useTasksActions();
 
   const handleGoBack = () => {
     navigate('/');

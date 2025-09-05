@@ -1,6 +1,5 @@
 import { env } from '../env';
 
-
 Cypress.Commands.add('visitWelcomePage', () => {
   cy.visit(env.localUrl);
   cy.wait(300);
@@ -263,7 +262,7 @@ Cypress.Commands.add('assertGeneratePageAccessible', () => {
     .and('be.disabled');
   
   cy.getByTestId('generate-prompt-input')
-    .should('have.attr', 'aria-label', 'Image prompt input. Describe your image')
+    .should('have.attr', 'aria-label', 'Image prompt input, describe your image')
     .and('have.attr', 'role', 'textbox')
     .and('have.attr', 'tabindex', '0')
     .focus()
@@ -307,7 +306,7 @@ Cypress.Commands.add('assertGenerateTextareaVisible', (shouldBeVisible: boolean 
       .should('be.visible')
       .and('have.prop', 'tagName', 'DIV')
       .and('have.attr', 'role', 'textbox')
-      .and('have.attr', 'aria-label', 'Image prompt input. Describe your image')
+      .and('have.attr', 'aria-label', 'Image prompt input, describe your image')
       .find('textarea')
       .should('exist')    
   } else {

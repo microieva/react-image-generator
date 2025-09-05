@@ -88,10 +88,6 @@ const GenerateStream: React.FC = () => {
     }
   };
 
-  const handleRetry = () => {
-
-  }
-
   return (
     <Container 
       maxWidth="sm" 

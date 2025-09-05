@@ -45,8 +45,7 @@ export const useCancellableGeneration = (id?:string) => {
                 `${env.apiBaseUrl}/generate`,
                 { prompt},
                 {
-                    cancelToken: cancelTokenSource.current.token,
-                    timeout: 300000,
+                    cancelToken: cancelTokenSource.current.token
                 }
             );
 
@@ -71,7 +70,7 @@ export const useCancellableGeneration = (id?:string) => {
                 setState(prev => ({ 
                     ...prev, 
                     loading: false, 
-                    error: error.response?.data?.error || 'Generation failed',
+                    error: error.message || 'Generation failed',
                     status: 'error'
                 }));
             }
@@ -154,7 +153,7 @@ export const useCancellableGeneration = (id?:string) => {
                     setState(prev => ({ 
                         ...prev, 
                         loading: false, 
-                        error: 'Connection failed 1' 
+                        error: 'Connection failed'
                     }));
                     resolve(null);
                 };
