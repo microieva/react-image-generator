@@ -95,7 +95,7 @@ describe('Generate Page', () => {
       cy.intercept('POST', '**/generate').as('generateRequest');
     });
     
-    context('should successfuly launch generation on click', ()=> {
+    context('Generation start', ()=> {
       afterEach(() => {
         cy.wait(500);
         cy.clickCancelButton();
@@ -114,8 +114,8 @@ describe('Generate Page', () => {
         });
       })
     })
-    context('should handle SSE stream events correctly', ()=> {
-      it('should display UI correctly during successful generation', () => {
+    context('Generation progress', ()=> {
+      it('should display generation progress UI correctly during successful generation', () => {
         cy.typePrompt('A beautiful landscape');
         cy.clickGenerateButton();
         cy.wait(500)
@@ -131,13 +131,9 @@ describe('Generate Page', () => {
         // cy.get('img[alt="Generated"]').should('be.visible');
         // cy.getByTestId('generate-reset-button').should('be.visible');
       });
-      // it('should successfuly reset UI when reset is clicked', ()=> { ---- only for prod
-      //   cy.getByTestId('generate-reset-button').should('be.visible');
-      //   cy.clickResetButton();
-      //   cy.get('img[alt="Generated"]').should('not.exist');
-      //   //cy.assertGenerationState();
-      // })
-      it('should successfuly cancel generation when cancel is clicked', ()=> {
+    })
+    context('Generation cancel', ()=> {
+      it('should successfuly cancel generation when cancel button is clicked', ()=> {
         cy.typePrompt('A beautiful landscape');
         cy.clickGenerateButton();
         cy.wait('@generateRequest');
@@ -145,6 +141,12 @@ describe('Generate Page', () => {
         cy.clickCancelButton();
         cy.assertGeneratePageInitialState();
       })
+      // it('should successfuly reset UI when reset is clicked', ()=> { ---- only for prod
+      //   cy.getByTestId('generate-reset-button').should('be.visible');
+      //   cy.clickResetButton();
+      //   cy.get('img[alt="Generated"]').should('not.exist');
+      //   //cy.assertGenerationState();
+      // })
     })
   });
 })

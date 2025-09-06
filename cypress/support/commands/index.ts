@@ -139,12 +139,10 @@ Cypress.Commands.add('testKeyboardNavigation', () => {
     .should('be.focused')
     .and('be.visible');
 
-  // Test Enter key
   cy.focused().realPress('Enter');
   cy.url().should('include', '/generate');
   cy.go('back');
 
-  // Test Space key
   cy.getByTestId('go-to-generate-button')
     .focus()
     .realPress('Space');
