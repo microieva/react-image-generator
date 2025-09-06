@@ -8,9 +8,6 @@ on:
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
-    env:
-      CYPRESS_BASE_URL: ${{ steps.deployment.outputs.url }}
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,9 +29,17 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           timeout: 300000 # 5 minutes
 
-      - name: Set production URL for main branch
+      - name: Set production URL for main branch pushes
         if: github.ref == 'refs/heads/main'
         run: echo "CYPRESS_BASE_URL=https://your-production-domain.vercel.app" >> $GITHUB_ENV
+
+      - name: Set preview URL for PRs
+        if: github.event_name == 'pull_request'
+        run: echo "CYPRESS_BASE_URL=${{ steps.deployment.outputs.url }}" >> $GITHUB_ENV
+
+      - name: Set dev/test branch URLs
+        if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/test'
+        run: echo "CYPRESS_BASE_URL=https://react-image-generator-git-test-microievas-projects.vercel.app" >> $GITHUB_ENV
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
