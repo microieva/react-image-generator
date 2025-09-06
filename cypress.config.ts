@@ -3,7 +3,7 @@ import 'dotenv/config';
 
 export default defineConfig({
   e2e: {
-    baseUrl: process.env.LOCALHOST_BASE_URL || 'http://localhost:3001',
+    baseUrl: process.env.CYPRESS_BASE_URL || 'http://localhost:3000',
     setupNodeEvents(on, config) {
       return config;
     },
