@@ -8,9 +8,8 @@ import {
   Alert,
   Paper
 } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Container from '@mui/material/Container';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ReplayIcon from '@mui/icons-material/Replay';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -36,8 +35,6 @@ const GenerateStream: React.FC = () => {
     prompt_str
   } = useCancellableGeneration(id);
 
-  const navigate = useNavigate();
-
   useEffect(()=> {
     setIsSubmitDisabled(loading || !prompt.trim())
   }, [loading, prompt]);
@@ -45,11 +42,6 @@ const GenerateStream: React.FC = () => {
   useEffect( ()=> { 
     id && prompt_str && setPrompt(prompt_str);
   }, [id, prompt_str])
-
-  const handleGoBack = () => {
-    !id && navigate('/');
-    id && navigate('/tasks')
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     setIsSubmitDisabled(true);
@@ -95,27 +87,7 @@ const GenerateStream: React.FC = () => {
       role="main" 
       aria-label="Generate section"
       aria-labelledby="generate-title" 
-      sx={{minHeight: '100vh'}}
     >
-      <Button
-        sx={{ p: 2, m: 4 }}
-        variant="contained"
-        startIcon={<ArrowBackIcon />}
-        onClick={handleGoBack}
-        data-testid="generate-go-back-button"
-        aria-label="Go back to welcome page" 
-        aria-describedby="generate-description" 
-        role="button" 
-        tabIndex={0}
-        onKeyUp={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            handleGoBack();
-          }
-        }}
-      >
-        Back 
-      </Button>
-      
       <Paper 
         elevation={3} 
         sx={{ p: 3, maxWidth: 600, mx: 'auto' }} 
@@ -165,10 +137,16 @@ const GenerateStream: React.FC = () => {
               }
             }}
           />
-          <Box sx={{ display: 'flex', gap: 2, mt: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+          <Box sx={{ 
+            display: 'flex', 
+            gap: 2, 
+            mt: 2, 
+            flexDirection: { xs: 'column', sm: 'row' } }}
+          >
             {!error && <Button
               type="submit"
               variant="contained"
+              sx={{minWidth:'50%'}}
               disabled={isSubmitDisabled}
               fullWidth
               data-testid="generate-submit-button"
@@ -181,6 +159,7 @@ const GenerateStream: React.FC = () => {
             {loading &&
               <Button
                 variant="outlined"
+                sx={{maxWidth:'50%'}}
                 data-testid="generate-cancel-button"
                 color="error"
                 onClick={handleCancel}

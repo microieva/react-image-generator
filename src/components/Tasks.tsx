@@ -13,16 +13,14 @@ import {
   Box,
   CircularProgress,
   Chip,
-  Alert,
-  Button,
+  Alert
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Cancel as CancelIcon, Refresh as RefreshIcon } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import env from '../utils/env';
 import { useDateFormatting } from '../hooks/useDateFormatting';
 import { Task } from '../types/api';
+import { useNavigate } from 'react-router-dom';
 
 export const Tasks: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -30,10 +28,6 @@ export const Tasks: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [cancellingIds, setCancellingIds] = useState<string[]>([]);
   const navigate = useNavigate();
-
-  const handleGoBack = () => {
-    navigate('/');
-  };
 
   const fetchTasks = async () => {
     try {
@@ -105,24 +99,6 @@ export const Tasks: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-       <Button
-        sx={{ p: 2, m: 4 }}
-        variant="contained"
-        startIcon={<ArrowBackIcon />}
-        onClick={handleGoBack}
-        data-testid="generate-go-back-button"
-        aria-label="Go back to welcome page" 
-        aria-describedby="generate-description" 
-        role="button" 
-        tabIndex={0}
-        onKeyUp={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            handleGoBack();
-          }
-        }}
-      >
-        Back 
-      </Button>
       <Paper elevation={3} sx={{ p: 3 }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Typography variant="h4" component="h1">

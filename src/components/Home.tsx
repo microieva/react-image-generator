@@ -1,9 +1,32 @@
 import { Container, Box, Typography, Button } from "@mui/material";
 import { env } from '../utils/env';
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export const Home: React.FC = () => {
+  const [isTasks, setIsTasks] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch(`${env.apiBaseUrl}/tasks`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }        
+        const data = await response.json();
+        const hasTasks = data.total_tasks > 0;
+        setIsTasks(hasTasks);
+        
+      } catch (err) {
+        console.error('Unexpected error checking if there are ongoing tasks.. ', err)
+        setIsTasks(false); 
+      } 
+    };
+
+    fetchTasks();
+  }, []); 
 
   const handleNavigateToGenerate = () => {
     navigate('/generate');
@@ -12,23 +35,28 @@ export const Home: React.FC = () => {
     navigate('/tasks');
   };
 
+
   return (
     <Container 
-      maxWidth="sm" 
+      maxWidth="lg" 
       data-testid="welcome-container"
       role="main" 
       aria-label="Welcome section"
       aria-labelledby="welcome-title" 
+      sx={{
+        display:'flex',
+        flexDirection:'row'
+      }}
     >
       <Box 
         sx={{ 
           p: 4, 
-          textAlign: 'center',
-          minHeight: '100vh',
+          textAlign: 'start',
+          minHeight: 'inherit',
           display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
+          flexDirection: 'column',
+          justifyContent: 'start',
+          alignItems: 'start',
           gap: 4,
           flexWrap: 'wrap'
         }} 
@@ -42,7 +70,7 @@ export const Home: React.FC = () => {
           data-testid="welcome-title"
           id="welcome-title" 
         >
-          Welcome to My App
+          Welcome!
         </Typography>
         
         <Typography 
@@ -52,18 +80,25 @@ export const Home: React.FC = () => {
           id="welcome-description" 
           aria-live="polite" 
         >
-          This is a tiny image generator built with React client and FastAPI server and Stable Diffusion2.1
+          This is a tiny image generator built with React, FastAPI server and Stable Diffusion2.1
         </Typography>
-    
-        <Button
-          variant="contained"
-          size="large"
+      </Box>
+      <Box
+         sx={{ 
+          p: 4, 
+          textAlign: 'start',
+          minHeight: 'inherit',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'start',
+          alignItems: 'start',
+          gap: 4,
+          flexWrap: 'wrap'
+        }}>
+         <Button
+          size="small"
           onClick={handleNavigateToGenerate}
-          sx={{
-            px: 4,
-            py: 1.5,
-            fontSize: '1.1rem'
-          }}
+          variant="contained"
           data-testid="go-to-generate-button"
           aria-label="Go to image generation page" 
           aria-describedby="welcome-description" 
@@ -78,15 +113,10 @@ export const Home: React.FC = () => {
         >
           Go to Generate
         </Button>
-        {env.isDevelopment && <Button
+        {isTasks && <Button
+          size="small"
           variant="contained"
-          size="large"
           onClick={handleNavigateToTasks}
-          sx={{
-            px: 4,
-            py: 1.5,
-            fontSize: '1.1rem'
-          }}
           data-testid="go-to-tasks-button"
           aria-label="Go to running tasks page" 
           aria-describedby="welcome-description" 
