@@ -1,32 +1,3 @@
-// export interface GenerationResponse {
-//   status: string
-//   taskId: string
-//   images?: Array<{
-//     image_url: string
-//     image_path: string
-//     filename: string
-//   }>
-//   prompt?: string
-//   message?: string
-//   error?: string
-// }
-
-// export interface ImageGenerationResponse {
-//   success: boolean
-//   data?: {
-//     images: Array<{
-//       url: string
-//       base64?: string
-//       id: string
-//       prompt: string
-//       timestamp: string
-//     }>
-//     model?: string
-//     generation_time?: number
-//   }
-//   error?: string
-// }
-
 export interface GenerationRequest {
   prompt: string
 }
@@ -48,6 +19,14 @@ export interface GenerationState {
     cancelled: boolean
     status: string
     prompt_str?: string | undefined
+}
+export interface TasksState {
+  tasks: Task[]
+  loading: boolean
+  error: string | null
+  deletionError: string | null
+  cancellingIds: string[]
+  isDeleting: boolean
 }
 export interface TaskState {
   loading:boolean
@@ -97,15 +76,8 @@ export interface Task {
   created_at: string;
 }
 
-/*
-ENDPOINT /status/<task_id>
- return {
-        "task_id": task_id,
-        "status": task_data['status'],
-        "progress": task_data.get('progress'),
-        "created_at": task_data['created_at'],
-        "started_at": task_data.get('started_at'),
-        "completed_at": task_data.get('completed_at'),
-        "cancelled": task_data.get('cancelled', False),
-        "has_result": 'result' in task_data
-    }*/
+export interface TaskProgress {
+  taskId: string;
+  progress: number;
+  status: Task['status'];
+}

@@ -2,12 +2,16 @@ import React from 'react';
 import { Box, Container } from '@mui/material';
 import Footer from './Footer';
 import { Header } from './Header';
+import { useLocation } from 'react-router-dom';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const location = useLocation();
+  const isTasksRoute = location.pathname === '/tasks';
+
   return (
     <Box 
       sx={{ 
@@ -22,7 +26,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         sx={{
           flexGrow: 1, 
           opacity: '0.8',
-          alignContent:'center'
+          alignContent: isTasksRoute ? 'flex-start': 'center'
         }}
       >
         {children}

@@ -1,14 +1,17 @@
-import { Container, Box, Typography, Button } from "@mui/material";
+import { Container, Box, Typography, Button, Divider } from "@mui/material";
 import { env } from '../utils/env';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useAnimation } from "../contexts/AnimationContext";
 
 export const Home: React.FC = () => {
   const [isTasks, setIsTasks] = useState<boolean>(false);
+  const [animationClass, setAnimationClass] = useState<string>('');
   const navigate = useNavigate();
+  const { setAnimationType } = useAnimation();
 
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchTaskTotal = async () => {
       try {
         const response = await fetch(`${env.apiBaseUrl}/tasks`);
         
@@ -17,21 +20,22 @@ export const Home: React.FC = () => {
         }        
         const data = await response.json();
         const hasTasks = data.total_tasks > 0;
+        setAnimationClass("animate__animated animate__tada")
         setIsTasks(hasTasks);
-        
       } catch (err) {
         console.error('Unexpected error checking if there are ongoing tasks.. ', err)
         setIsTasks(false); 
       } 
     };
-
-    fetchTasks();
+    fetchTaskTotal();
   }, []); 
 
   const handleNavigateToGenerate = () => {
+    setAnimationType('slideInRight');
     navigate('/generate');
   };
   const handleNavigateToTasks = () => {
+    setAnimationType('slideInRight');
     navigate('/tasks');
   };
 
@@ -83,6 +87,7 @@ export const Home: React.FC = () => {
           This is a tiny image generator built with React, FastAPI server and Stable Diffusion2.1
         </Typography>
       </Box>
+      <Divider aria-hidden="true" orientation="vertical" variant="middle" flexItem/>
       <Box
          sx={{ 
           p: 4, 
@@ -109,11 +114,12 @@ export const Home: React.FC = () => {
               e.preventDefault();
               handleNavigateToGenerate();
             }
-            }}
+          }}
         >
           Go to Generate
         </Button>
         {isTasks && <Button
+          className={animationClass}
           size="small"
           variant="contained"
           onClick={handleNavigateToTasks}
@@ -128,7 +134,7 @@ export const Home: React.FC = () => {
               handleNavigateToTasks();
             }
             }}
-        >
+          >
             Go to Tasks
         </Button>}
       </Box>

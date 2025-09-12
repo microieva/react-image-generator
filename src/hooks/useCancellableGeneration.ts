@@ -183,8 +183,7 @@ export const useCancellableGeneration = (id?:string) => {
                     ...prev, 
                     cancelled: true, 
                     loading: false,
-                    status: 'cancelled',
-                    taskId: null
+                    status: 'cancelled'
                 }));
             } else {
                 setState(prev => ({ 
@@ -232,7 +231,6 @@ export const useCancellableGeneration = (id?:string) => {
                     cancelled: Boolean(response.data.cancelled_at),
                     status: response.data.status,
                     prompt_str: response.data.prompt
-                    // this response has result to use it!!! add to state or add seperate getter?
                 }));
             } else {
                 setState(prev => ({ 
@@ -250,7 +248,7 @@ export const useCancellableGeneration = (id?:string) => {
 
     const getStream = useCallback(async()=> {
          if (id) {
-            return new Promise((resolve) => {      
+            return new Promise<GenerationResult | null>((resolve) => {      
                 eventSourceRef.current = new EventSource(`${env.apiBaseUrl}/generate-stream/${id}`);
     
                 eventSourceRef.current.onmessage = (event) => {
@@ -316,6 +314,7 @@ export const useCancellableGeneration = (id?:string) => {
     }, [id])
 
     return {
+        getStream,
         generate: generateWithSSE, 
         cancel,
         reset,

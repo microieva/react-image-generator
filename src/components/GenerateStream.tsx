@@ -6,7 +6,9 @@ import {
   LinearProgress,
   Typography,
   Alert,
-  Paper
+  Paper,
+  Divider,
+  CircularProgress
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import Container from '@mui/material/Container';
@@ -21,9 +23,12 @@ const GenerateStream: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const [prompt, setPrompt] = useState('');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(false);
-
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true);
+  const [animationClass, setAnimationClass] = useState<string>('');
+  const [isExiting, setIsExisting] = useState(false);
+  
   const {
+    getStream,
     generate,
     cancel,
     reset: resetGeneration,
@@ -36,18 +41,27 @@ const GenerateStream: React.FC = () => {
   } = useCancellableGeneration(id);
 
   useEffect(()=> {
-    setIsSubmitDisabled(loading || !prompt.trim())
+    setIsSubmitDisabled(loading || !prompt.trim());
   }, [loading, prompt]);
 
-  useEffect( ()=> { 
+  useEffect(()=> { 
     id && prompt_str && setPrompt(prompt_str);
-  }, [id, prompt_str])
+    const getResult = async ()=> {
+      const result:GenerationResult | null = await getStream();
+      if (result) setGeneratedImage(result.image_url);
+    }
+
+    if (id && status ==='completed') {
+      getResult();  
+      setIsSubmitDisabled(true);
+    }
+  }, [id, prompt_str, status])
 
   const handleSubmit = async (e: React.FormEvent) => {
     setIsSubmitDisabled(true);
     e.preventDefault();
     if (!prompt.trim()) return;
-
+    
     const result: GenerationResult | null = await generate(prompt.trim());
     if (result && result.image_url) {
       setGeneratedImage(result.image_url);
@@ -56,17 +70,24 @@ const GenerateStream: React.FC = () => {
   };
 
   const handleCancel = async () => {
+    setAnimationClass('animate__animated animate_fadeOutRight');
+    setIsExisting(true);
     await cancel();
+    setIsSubmitDisabled(false);
     setPrompt('');
     setGeneratedImage(null);
-    setIsSubmitDisabled(false);
     resetGeneration();
+    setIsExisting(false);
   };
 
   const handleReset = () => {
+    setAnimationClass('animate__animated animate_fadeOutRight');
+    setIsExisting(true);
     resetGeneration();
     setPrompt('');
     setGeneratedImage(null);
+    //setAnimationClass('');
+    setIsExisting(false);
   };
 
   const handleDownload = () => {
@@ -82,18 +103,31 @@ const GenerateStream: React.FC = () => {
 
   return (
     <Container 
-      maxWidth="sm" 
       data-testid="generate-container"
       role="main" 
       aria-label="Generate section"
       aria-labelledby="generate-title" 
+      sx={{
+        display:'flex', 
+        flexDirection:'row', 
+        transition: 'all 0.5s ease-in-out',
+        margin: 'auto',
+        overflow: 'hidden'
+      }}
     >
       <Paper 
-        elevation={3} 
-        sx={{ p: 3, maxWidth: 600, mx: 'auto' }} 
+        sx={{ 
+          display: 'flex',
+          flexDirection: 'column',
+          maxWidth:'60vw',
+          m: 'auto', 
+          flex: loading && !isExiting ? 1 : 2, 
+          transition: 'flex 0.5s ease-in-out',
+        }} 
         data-testid="generate-paper"
-         aria-describedby="generate-description" 
-         aria-live="polite">
+        aria-describedby="generate-description" 
+        aria-live="polite"
+      >
         <Typography 
           variant="h4" 
           component="h1" 
@@ -117,11 +151,11 @@ const GenerateStream: React.FC = () => {
           <TextField
             label="Describe your image..."
             variant="outlined"
-            value={prompt}
+            value={generatedImage ? '' : prompt}
             onChange={(e) => setPrompt(e.target.value)}
             fullWidth
             margin="normal"
-            disabled={loading}
+            disabled={loading || Boolean(generatedImage)}
             multiline
             rows={3}
             role="textbox"
@@ -143,7 +177,7 @@ const GenerateStream: React.FC = () => {
             mt: 2, 
             flexDirection: { xs: 'column', sm: 'row' } }}
           >
-            {!error && <Button
+            {!error && !generatedImage && <Button
               type="submit"
               variant="contained"
               sx={{minWidth:'50%'}}
@@ -156,8 +190,34 @@ const GenerateStream: React.FC = () => {
             >
               {loading ? `${status}...` : 'Generate Image'}
             </Button>}
+            {!error && generatedImage && 
+              <>
+                <Button 
+                  fullWidth
+                  onClick={handleReset}
+                  sx={{minWidth:'50%'}}
+                  variant="contained"
+                  role="button"
+                  aria-label="Refresh for new generation"
+                  data-testid="generate-reset-button"
+                  aria-describedby="generate-description" 
+                  startIcon={<RefreshIcon />}
+                >
+                  Generate New
+                </Button>
+                <Button 
+                  onClick={handleDownload}
+                  variant="contained"
+                  startIcon={<DownloadIcon />}
+                  sx={{ flex: { xs: 1, sm: 'none' } }}
+                >
+                  Download Image
+                </Button>
+              </>
+            }
             {loading &&
               <Button
+                className={isExiting ? animationClass : undefined}
                 variant="outlined"
                 sx={{maxWidth:'50%'}}
                 data-testid="generate-cancel-button"
@@ -199,96 +259,163 @@ const GenerateStream: React.FC = () => {
                 Retry
               </Button> }
           </Box>
-
-          {error && (
-            <Alert severity="error" sx={{ mt: 2 }} role="alert" data-testid="alert">
-              {error}
-            </Alert>
-          )}
-
-          {cancelled && (
-            <Alert severity="info" sx={{ mt: 2 }} role="info" data-testid="info">
-              Generation was cancelled. You can start a new one.
-            </Alert>
-          )}
         </form>
       </Paper>
 
-      {loading && (
-        <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 4 }}>
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="body2" gutterBottom>
-              Generating your image, please wait...
-            </Typography>
-            <LinearProgress 
-              role="progress-bar"
-              variant="determinate" 
-              value={progress} 
-              sx={{ height: 8, borderRadius: 4 }}
-              aria-valuenow={progress}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              data-testid="progress-bar"
-              data-cy="progress-bar"
-            />
-            <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-              {progress}% complete
-            </Typography>
+      {loading && (<>
+        <Divider 
+          aria-hidden="true" 
+          orientation="vertical" 
+          variant="middle" 
+          flexItem 
+          sx={{
+            mx:10,  
+            //opacity: loading && !isExiting ? 1 : 0,
+            display: loading && !isExiting ? 'block' : 'none',
+            transition: 'display 0.4s ease-in-out'
+          }}
+        />
+        <Box 
+          className={isExiting ? animationClass : undefined} 
+          sx={{ 
+            display: 'flex',
+            alignItems: 'center',
+            flex: isExiting ? 0 : 1,
+            opacity: isExiting ? 0 : 1,
+            minWidth: 0,
+            transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
+            overflow: 'hidden',
+          }}
+        >
+          <Paper 
+            sx={{  
+              display: 'flex',
+              flexDirection:'column',
+              flex: 1,
+            }}
+          >
+              <Typography variant="body2" gutterBottom>
+                Generating your image, please wait...
+              </Typography>
+              <LinearProgress 
+                role="progress-bar"
+                variant="determinate" 
+                value={progress} 
+                sx={{ height: 8, borderRadius: 4 }}
+                aria-valuenow={progress}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                data-testid="progress-bar"
+                data-cy="progress-bar"
+              />
+              <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
+                {progress}% complete
+              </Typography>
+          </Paper>
+        </Box>
+      </>
+      )}
+      {error && !generatedImage && (
+        <>
+          <Divider aria-hidden="true" orientation="vertical" variant="middle" flexItem sx={{mx:10}}/>
+          <Box 
+            className={isExiting ? animationClass : undefined} 
+            sx={{ 
+              display: 'flex',
+              alignItems: 'center',
+              flex: isExiting ? 0 : 1,
+              opacity: isExiting ? 0 : 1,
+              //minWidth: 0,
+              width:'50vw',
+              transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
+              overflow: 'hidden',
+            }}
+          > 
+              <Alert severity="error" role="alert" data-testid="alert">
+                {error}
+              </Alert>
           </Box>
-        </Paper>
+        </>
       )}
 
-      {generatedImage && (
-        <Paper elevation={3} sx={{ p: 3, pt: 1, maxWidth: 600, mx: 'auto', my: 4 }}>
-          <Box sx={{ 
-            my: 3, 
-            display: 'flex', 
-            flexDirection: { xs: 'column', sm: 'row' }, 
-            gap: 2,
-            justifyContent: 'space-between',
-            alignItems: { xs: 'stretch', sm: 'center' }
-          }}>
-            <Button 
-              onClick={handleReset}
-              variant="outlined"
-              data-testid="generate-reset-button"
-              startIcon={<RefreshIcon />}
-              sx={{ flex: { xs: 1, sm: 'none' } }}
-            >
-              Generate New
-            </Button>
-            <Button 
-              onClick={handleDownload}
-              variant="contained"
-              startIcon={<DownloadIcon />}
-              sx={{ flex: { xs: 1, sm: 'none' } }}
-            >
-              Download Image
-            </Button>
-          </Box>
-          
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'center',
-            borderRadius: 2,
-            overflow: 'hidden',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-          }}>
-            <img 
-              src={generatedImage} 
-              alt="Generated" 
-              style={{ 
-                maxWidth: '100%', 
-                maxHeight: '400px',
-                objectFit: 'contain'
-              }} 
-            />
-          </Box>
-          
-          <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary', textAlign: 'center' }}>
-            Prompt: {prompt}
-          </Typography>
-        </Paper>
+      {cancelled && (
+        <>
+          <Divider 
+            aria-hidden="true" 
+            orientation="vertical" 
+            variant="middle" 
+            flexItem 
+            sx={{
+              mx:10, 
+              opacity: loading ? 1 : 0,
+              transition: 'opacity 0.6s ease-in-out'
+            }}
+          />
+          <Paper 
+            elevation={3} 
+            sx={{
+              m: 'auto', 
+              width:'50vw', 
+              //flex: loading ? 1/2 : 0,
+              // minWidth: 0,
+              // transition: 'flex 0.5s ease-in-out, width 0.5s ease-in-out',
+              // opacity: loading ? 1 : 0,
+              // overflow: 'hidden'
+            }} 
+          > 
+            <Alert severity="info" sx={{ mt: 2 }} role="info" data-testid="info">
+              Generation was cancelled. You can start a new one.
+            </Alert>
+          </Paper>
+        </>
+      )}
+
+      {status === 'completed' && !error && (
+        <>
+          <Divider aria-hidden="true" orientation="vertical" variant="middle" flexItem sx={{mx:10}}/>
+          <Paper 
+            elevation={3} 
+            sx={{ 
+              m:'auto', 
+              width:'50vw', 
+              flex: isExiting ? 0 : 1,
+              opacity: isExiting ? 0 : 1,
+              minWidth: 0,
+              transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
+              overflow: 'hidden'
+            }} 
+            className={isExiting ? animationClass : undefined} >  
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center',
+              borderRadius: 2,
+              flex: isExiting ? 0 : 1,
+              opacity: isExiting ? 0 : 1,
+              minWidth: 0,
+              transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
+              overflow: 'hidden',
+            }}>
+              {!generatedImage && <CircularProgress/>}
+
+              {generatedImage && <img 
+                src={generatedImage} 
+                alt="Generated" 
+                className = "animate__animated animated__pulse"
+                style={{ 
+                  width: 'auto', 
+                  height: '60vh',
+                  objectFit: 'contain',
+                  borderRadius:5
+                }} 
+              />}
+            </Box>  
+            {generatedImage && 
+              <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary', textAlign: 'center' }}>
+                Prompt: {prompt}
+              </Typography>
+            }
+          </Paper>
+        </>
       )}
     </Container>
   );

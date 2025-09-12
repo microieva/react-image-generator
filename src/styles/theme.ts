@@ -29,6 +29,30 @@ export const lightTheme = createTheme({
         },
       },
     },
+     MuiDivider: {
+      styleOverrides: {
+        root: {
+          backgroundColor:'dimgray',
+          borderRightWidth:'0.5px'
+        },
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'transparent',
+          justifyContent:'center'
+        }
+      }
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          boxShadow: 'none', 
+          background:'none' 
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -59,6 +83,20 @@ export const lightTheme = createTheme({
           },
         }
       ]
+    },
+    MuiLinearProgress: {
+      styleOverrides: {
+        root: {
+          height: 6, 
+          borderRadius: 3, 
+          backgroundColor: '#e0e0e0', 
+        },
+        bar: {
+          borderRadius: 3,
+          backgroundColor: '#9e9e9e', 
+          transition: 'transform 0.4s linear',
+        },
+      },
     },
     MuiTextField: {
       styleOverrides: {
@@ -101,7 +139,7 @@ export const lightTheme = createTheme({
           },
         },
         notchedOutline: {
-          borderColor: 'darkgray', //default
+          borderColor: 'darkgray', 
           borderWidth: '1px',
         },
       },
@@ -137,7 +175,7 @@ export const darkTheme = createTheme({
       dark: '#ad1457',
     },
     background: {
-      default: '#121212',
+      default: '#060605ff',
       paper: '#1e1e1e',
     },
   },
@@ -152,6 +190,30 @@ export const darkTheme = createTheme({
           textDecoration: 'none',
         },
       },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          backgroundColor:'gray',
+          borderRightWidth:'0.5px'
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          boxShadow: 'none', 
+          background:'none' 
+        },
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'transparent',
+          justifyContent:'center'
+        }
+      }
     },
     MuiButton: {
       styleOverrides: {
@@ -183,6 +245,21 @@ export const darkTheme = createTheme({
             },
           },
         }
+      ]
+    },
+   MuiCircularProgress: {
+      styleOverrides: {
+        root: {
+
+        },
+      },
+      variants: [
+        // {
+        //   props: { variant: 'themed' }, 
+        //   style: {
+        //     color: 'white'
+        //   }
+        // }
       ]
     },
     MuiTextField: {
@@ -226,12 +303,26 @@ export const darkTheme = createTheme({
           },
         },
         notchedOutline: {
-          borderColor: '#e0e0e0', //default
+          borderColor: '#e0e0e0', 
           borderWidth: '1px',
         },
       },
     },
-     MuiInputLabel: {
+    MuiLinearProgress: {
+      styleOverrides: {
+        root: {
+          height: 6,
+          borderRadius: 3,
+          backgroundColor: '#424242', 
+        },
+        bar: {
+          borderRadius: 3,
+          backgroundColor: '#bdbdbd', 
+          transition: 'transform 0.4s linear',
+        },
+      },
+    },
+    MuiInputLabel: {
       styleOverrides: {
         root: {
           color: 'darkgray',

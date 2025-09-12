@@ -3,20 +3,32 @@ import ThemeToggle from "./ThemeToggle"
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useAnimation } from "../contexts/AnimationContext";
+
 
 export const Header: React.FC = () => {
   const location = useLocation();
   const [isHomeRoute, setIsHomeRoute] = useState<boolean>(true);
   const navigate = useNavigate();
+  const { setAnimationType } = useAnimation();
 
   useEffect(()=> {
     setIsHomeRoute(location.pathname === '/')
   })
 
   const handleGoBack = () => {
-    if (location.pathname.endsWith('/tasks') || (location.pathname.endsWith('/generate-stream')) || (location.pathname.endsWith('/generate'))) {navigate('/');}
-    else navigate('/tasks');
-  }
+    if (location.pathname.endsWith('/tasks') || 
+        location.pathname.endsWith('/generate-stream') || 
+        location.pathname.endsWith('/generate')) 
+    {
+      setAnimationType('slideInLeft');
+      navigate('/');
+    } else {
+      setAnimationType('slideOutRight');
+      navigate('/tasks');
+
+    }
+  };
 
   return (
     <AppBar 
@@ -35,6 +47,7 @@ export const Header: React.FC = () => {
               px:2,
               backgroundColor:'none', 
               border:'transparent solid 0.8px',
+              transition: 'all 0.3s ease',
               '&:hover': {
                 backgroundColor: 'transparent',
                 border: 'darkgray solid 0.8px'

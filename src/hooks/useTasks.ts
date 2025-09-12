@@ -1,0 +1,196 @@
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAnimation } from '../contexts/AnimationContext';
+import { Task, TaskProgress, TasksState } from '../types/api';
+import env from '../utils/env';
+
+export const useTasks = () => {
+  const [state, setState] = useState<TasksState>({
+    tasks: [],
+    loading: true,
+    error: null,
+    deletionError: null,
+    cancellingIds: [],
+    isDeleting: false
+  });
+
+  const progressStreamsRef = useRef<Map<string, EventSource>>(new Map());
+  const navigate = useNavigate();
+  const { setAnimationType } = useAnimation();
+
+  const updateState = useCallback((updates: Partial<TasksState>) => {
+    setState(prev => ({ ...prev, ...updates }));
+  }, []);
+
+  const startProgressStream = useCallback((taskId: string) => {
+    const existingStream = progressStreamsRef.current.get(taskId);
+    if (existingStream) {
+      existingStream.close();
+    }
+
+    const eventSource = new EventSource(`${env.apiBaseUrl}/generate-stream/${taskId}`);
+    
+    eventSource.onmessage = (event) => {
+      try {
+        const progressData: TaskProgress = JSON.parse(event.data);
+        
+        setState(prev => ({
+          ...prev,
+          tasks: prev.tasks.map(task => 
+            task.taskId === taskId 
+              ? { ...task, progress: progressData.progress, status: progressData.status }
+              : task
+          )
+        }));
+        
+        if (progressData.status === 'completed' || progressData.status === 'failed' || progressData.status === 'cancelled') {
+          eventSource.close();
+          progressStreamsRef.current.delete(taskId);
+        }
+      } catch (error) {
+        console.error('Error parsing progress data:', error);
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.error(`EventSource failed for task ${taskId}:`, error);
+      eventSource.close();
+      progressStreamsRef.current.delete(taskId);
+    };
+
+    progressStreamsRef.current.set(taskId, eventSource);
+  }, [env.apiBaseUrl]);
+
+  const fetchTasks = useCallback(async () => {
+    try {
+      updateState({ error: null, deletionError: null });
+      const response = await axios.get(`${env.apiBaseUrl}/tasks`);
+      
+      if (response.status !== 200) {
+        throw new Error(`Failed to fetch tasks: ${response.status} ${response.statusText}`);
+      }
+      
+      const data: Record<string, Omit<Task, 'taskId'>> = response.data.tasks;
+      const newTasks: Task[] = Object.entries(data).map(([taskId, taskData]) => ({
+        taskId,
+        ...taskData
+      })).sort((a, b) => {
+        const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return dateB - dateA; 
+      });
+      
+      setTimeout(() => {
+        setState(prev => ({
+          ...prev,
+          tasks: newTasks,
+          loading: false
+        }));
+        
+        newTasks.forEach(task => {
+          if (task.status === 'processing' || task.status === 'pending') {
+            startProgressStream(task.taskId);
+          }
+        });
+      }, 1000);
+    } catch (err) {
+      updateState({
+        error: err instanceof Error ? err.message : 'An unknown error occurred',
+        loading: false
+      });
+    } 
+  }, [startProgressStream, updateState]);
+
+  const handleCancel = useCallback(async (taskId: string) => {
+    try {
+      updateState({ cancellingIds: [...state.cancellingIds, taskId] });
+      
+      const response = await axios.post(`${env.apiBaseUrl}/cancel-generation`, { 
+        task_id: taskId
+      });
+      
+      if (response.status === 200 && response.data.status === 'success') {
+        setState(prev => ({
+          ...prev,
+          tasks: prev.tasks.map(task => 
+            task.taskId === taskId 
+              ? { ...task, status: 'cancelled' }
+              : task
+          )
+        }));
+        
+        const stream = progressStreamsRef.current.get(taskId);
+        if (stream) {
+          stream.close();
+          progressStreamsRef.current.delete(taskId);
+        }
+      } else {
+        updateState({ error: response.data.error || 'Cancellation failed' });
+      }
+    } catch (error: any) {   
+      updateState({ error: error.response?.data?.error || 'Cancellation failed' });
+    } finally {
+      setState(prev => ({
+        ...prev,
+        cancellingIds: prev.cancellingIds.filter(id => id !== taskId)
+      }));
+    }
+  }, [env.apiBaseUrl, state.cancellingIds, updateState]);
+
+  const refreshTaskProgress = useCallback((taskId: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    startProgressStream(taskId);
+  }, [startProgressStream]);
+
+  const deleteTasks = useCallback(async () => {
+    updateState({ isDeleting: true, deletionError: null });
+    
+    try {
+      const response = await axios.delete(`${env.apiBaseUrl}/delete-tasks`);
+      if (response.status !== 200) {
+        throw new Error(`Failed to delete tasks: ${response.status} ${response.statusText}`);
+      } 
+      fetchTasks();
+    } catch (err) {
+      updateState({
+        deletionError: err instanceof Error ? err.message : 'An unknown error occurred',
+        isDeleting: false
+      });
+    } finally {
+      updateState({ isDeleting: false });
+    }
+  }, [fetchTasks, updateState]);
+
+  const handleNavigate = useCallback((path: string) => {
+    setAnimationType('');
+    setTimeout(() => {
+      setAnimationType('fadeIn');
+      navigate(path);
+    }, 500);
+  }, [navigate, setAnimationType]);
+
+  useEffect(() => {
+    return () => {
+      progressStreamsRef.current.forEach((stream) => {
+        stream.close();
+      });
+      progressStreamsRef.current.clear();
+    };
+  }, []);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
+
+  return {
+    fetchTasks,
+    handleCancel,
+    refreshTaskProgress,
+    deleteTasks,
+    handleNavigate,
+    ...state
+  };
+};
