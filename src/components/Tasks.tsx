@@ -45,14 +45,12 @@ const TaskRow = React.memo(({
   cancellingIds, 
   onCancel, 
   onRefresh, 
-  onClick,
   onNavigate 
 }: { 
   task: Task;
   cancellingIds: string[];
   onCancel: (taskId: string) => void;
   onRefresh: (taskId: string, e?: React.MouseEvent) => void;
-  onClick: (taskId: string) => void;
   onNavigate: (path: string) => void;
 }) => {
   const isProcessing = task.status === 'processing';
@@ -203,7 +201,6 @@ export const Tasks: React.FC = () => {
         cancellingIds={cancellingIds}
         onCancel={handleCancel}
         onRefresh={refreshTaskProgress}
-        onClick={() => {}}
         onNavigate={handleNavigate}
       />
     ));
