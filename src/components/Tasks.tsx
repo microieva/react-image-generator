@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import {
   Container,
-  Paper,
   Box,
   Typography,
   TableContainer,
@@ -13,7 +12,7 @@ import {
   Chip,
   CircularProgress,
   IconButton,
-  Alert,
+  Alert
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -21,6 +20,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useDateFormatting } from '../hooks/useDateFormatting';
 import { Task } from '../types/api';
 import { useTasks } from '../hooks/useTasks';
+import { useDevice } from '../contexts/DeviceContext';
 
 
 const formatDate = (dateString: string) => {
@@ -62,7 +62,16 @@ const TaskRow = React.memo(({
       onClick={isProcessing ? () => onNavigate(`/generate-stream/${task.taskId}`) : undefined}
       sx={{ cursor: isProcessing ? 'pointer' : 'default' }}
     >
-      <TableCell sx={{ fontFamily: 'monospace' }} align="left">
+      <TableCell 
+        sx={{ 
+          fontFamily: 'monospace', 
+          maxWidth: 300, 
+          overflow: 'hidden', 
+          textOverflow:'ellipsis', 
+          whiteSpace: 'nowrap' 
+        }} 
+        align="left"
+      >
         {task.taskId}
       </TableCell>
       <TableCell 
@@ -114,7 +123,7 @@ const TaskRow = React.memo(({
         </Box>
       </TableCell>
       <TableCell align="left">{formatDate(task.created_at)}</TableCell>
-      <TableCell align="left">
+      <TableCell align="right">
         {(task.status === 'processing' || task.status === 'pending') ? (
           <IconButton
             onClick={(e) => {
@@ -144,6 +153,7 @@ const TaskRow = React.memo(({
 TaskRow.displayName = 'TaskRow';
 
 export const Tasks: React.FC = () => {
+  const { isDesktop } = useDevice();
   const { tasks,
     loading,
     error,
@@ -154,7 +164,8 @@ export const Tasks: React.FC = () => {
     handleCancel,
     refreshTaskProgress,
     deleteTasks,
-    handleNavigate } = useTasks();
+    handleNavigate 
+  } = useTasks();
 
   useEffect(() => {
     fetchTasks();
@@ -168,7 +179,7 @@ export const Tasks: React.FC = () => {
         <TableCell align="left">Status</TableCell>
         <TableCell align="left">Progress</TableCell>
         <TableCell align="left">Created At</TableCell>
-        <TableCell align="left">Actions</TableCell>
+        <TableCell align="right">Actions</TableCell>
       </TableRow>
     </TableHead>
   ), []);
@@ -215,47 +226,74 @@ export const Tasks: React.FC = () => {
     }
     if (tasks.length > 0) {
       return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-          <Paper elevation={3} sx={{ p: 3 }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={8}>
-              <Typography variant="h4" component="h1">
-                Ongoing Tasks
-              </Typography>
-              <Box display="flex" alignItems="center" >
-                {deletionError && (
-                  <Alert severity="error" sx={{py:0}} onClose={() => {}}>
-                    {deletionError}
-                  </Alert>
+        <Container 
+          maxWidth="lg" 
+          sx={{ 
+            display:'flex',
+            flexDirection:'column',
+            gap:8,
+            my:'auto'
+          }}
+        >
+          <Box 
+            display='flex'
+            justifyContent="space-between" 
+            alignItems="center" 
+            sx={{mt:4}}
+          >
+            <Typography variant="h4" component="h1">
+              Ongoing Tasks
+            </Typography>
+            <Box display="flex" alignItems="center" >
+              {deletionError && (
+                <Alert severity="error" sx={{py:0}} onClose={() => {}}>
+                  {deletionError}
+                </Alert>
+              )}
+              <IconButton
+                onClick={deleteTasks} 
+                disabled={tasks.length === 0 || Boolean(deletionError) || tasks.every(t => t.status ==='processing')}
+                aria-label="Refresh tasks">
+                {isDeleting ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  <DeleteForeverIcon />
                 )}
-                <IconButton
-                  onClick={deleteTasks} 
-                  disabled={tasks.length === 0 || Boolean(deletionError) || tasks.every(t => t.status ==='processing')}
-                  aria-label="Refresh tasks">
-                  {isDeleting ? (
-                    <CircularProgress size={20} />
-                  ) : (
-                    <DeleteForeverIcon />
-                  )}
-                </IconButton>
-                <IconButton 
-                  onClick={fetchTasks} 
-                  color="inherit"
-                  disabled={loading}
-                  aria-label="Refresh tasks"
-                >
-                  <RefreshIcon />
-                </IconButton>  
-              </Box>
+              </IconButton>
+              <IconButton 
+                onClick={fetchTasks} 
+                color="inherit"
+                disabled={loading}
+                aria-label="Refresh tasks"
+              >
+                <RefreshIcon />
+              </IconButton>  
             </Box>
-              <TableContainer sx={{ maxHeight: '50vh' }}>
-                <Table size="small" sx={{ minWidth: 650 }} stickyHeader>
-                  {tableHeader}
-                  <TableBody>
-                    {tableRows}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-          </Paper>
+          </Box>
+          <TableContainer 
+            sx={{ 
+              maxHeight: isDesktop ? '60vh' : '70vh',  
+              width: '100%',       
+              overflow: 'scroll',
+            }}>
+            <Table size="small" 
+              sx={{ 
+                minWidth: '100%', 
+                width: '100%',     
+                tableLayout: 'fixed', 
+                '& .MuiTableCell-root': {
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }
+              }}  
+              stickyHeader>
+              {tableHeader}
+              <TableBody>
+                {tableRows}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Container>
       );
     } return (

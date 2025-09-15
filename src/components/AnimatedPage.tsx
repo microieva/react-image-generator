@@ -11,16 +11,10 @@ const AnimatedPage: React.FC<AnimatedPageProps> = ({ children }) => {
 
   useEffect(() => {
     setAnimationClass(getAnimationClass());
-    
-    const timer = setTimeout(() => {
-      setAnimationClass('slideInRight')
-    }, 500); 
-
-    return () => clearTimeout(timer);
-  }, [getAnimationClass]);
+  }, []);
 
   return (
-    <div className={`${animationClass}`.trim()}>
+    <div className={`animation ${animationClass}`.trim()}>
       {children}
     </div>
   );

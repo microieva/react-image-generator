@@ -26,6 +26,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         sx={{
           flexGrow: 1, 
           opacity: '0.8',
+          p:0,
           alignContent: isTasksRoute ? 'flex-start': 'center'
         }}
       >

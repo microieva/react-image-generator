@@ -22,6 +22,13 @@ export const lightTheme = createTheme({
     fontFamily:'"Courier Prime", monospace',
   },
   components: {
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          padding: 0,
+        },
+      },
+    },
     MuiLink: {
       styleOverrides: {
         root: {
@@ -57,8 +64,9 @@ export const lightTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 25, 
-          transition: 'all 0.3s ease', 
-          boxShadow:'none'
+          transition: 'all 0.5s ease', 
+          boxShadow:'none',
+          fontSize:'smaller'
         },
       },
       variants: [
@@ -184,6 +192,13 @@ export const darkTheme = createTheme({
     fontWeightRegular:'100'
   },
   components: {
+     MuiContainer: {
+      styleOverrides: {
+        root: {
+          padding: 0,
+        },
+      },
+    },
     MuiLink: {
       styleOverrides: {
         root: {
@@ -219,8 +234,9 @@ export const darkTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 25, 
-          transition: 'all 0.3s ease', 
-          boxShadow:'none'
+          transition: 'all 0.5s ease', 
+          boxShadow:'none',
+          fontSize:'smaller'
         },
       },
       variants: [

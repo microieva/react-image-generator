@@ -15,7 +15,7 @@ interface AnimationProviderProps {
 
 export const AnimationProvider: React.FC<AnimationProviderProps> = ({ 
   children, 
-  defaultAnimation = 'slideInRight' 
+  defaultAnimation = '' 
 }) => {
   const [animationType, setAnimationType] = useState(defaultAnimation);
 

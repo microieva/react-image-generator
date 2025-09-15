@@ -165,11 +165,8 @@ export const useTasks = () => {
   }, [fetchTasks, updateState]);
 
   const handleNavigate = useCallback((path: string) => {
-    setAnimationType('');
-    setTimeout(() => {
       setAnimationType('fadeIn');
       navigate(path);
-    }, 500);
   }, [navigate, setAnimationType]);
 
   useEffect(() => {

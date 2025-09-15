@@ -4,6 +4,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAnimation } from "../contexts/AnimationContext";
+import { useDevice } from "../contexts/DeviceContext";
 
 
 export const Header: React.FC = () => {
@@ -11,22 +12,25 @@ export const Header: React.FC = () => {
   const [isHomeRoute, setIsHomeRoute] = useState<boolean>(true);
   const navigate = useNavigate();
   const { setAnimationType } = useAnimation();
+  const { isDesktop } = useDevice();
 
   useEffect(()=> {
     setIsHomeRoute(location.pathname === '/')
   })
 
   const handleGoBack = () => {
-    if (location.pathname.endsWith('/tasks') || 
-        location.pathname.endsWith('/generate-stream') || 
-        location.pathname.endsWith('/generate')) 
+    if (location.pathname.endsWith('tasks') || 
+        location.pathname.endsWith('generate-stream') || 
+        location.pathname.endsWith('generate')) 
     {
-      setAnimationType('slideInLeft');
+      if (isDesktop) setAnimationType('slideInLeft');
+      else setAnimationType('slideInDown');
       navigate('/');
-    } else {
-      setAnimationType('slideOutRight');
-      navigate('/tasks');
 
+    } else {
+      if (isDesktop) setAnimationType('slideOutRight');
+      else setAnimationType('fadeIn');
+      navigate('/tasks');
     }
   };
 

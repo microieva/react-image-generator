@@ -3,12 +3,14 @@ import { env } from '../utils/env';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAnimation } from "../contexts/AnimationContext";
+import { useDevice } from "../contexts/DeviceContext";
 
 export const Home: React.FC = () => {
   const [isTasks, setIsTasks] = useState<boolean>(false);
   const [animationClass, setAnimationClass] = useState<string>('');
   const navigate = useNavigate();
   const { setAnimationType } = useAnimation();
+  const { isDesktop } = useDevice();
 
   useEffect(() => {
     const fetchTaskTotal = async () => {
@@ -31,11 +33,15 @@ export const Home: React.FC = () => {
   }, []); 
 
   const handleNavigateToGenerate = () => {
-    setAnimationType('slideInRight');
-    navigate('/generate');
+    if (isDesktop) setAnimationType('slideInRight');
+    else {
+      setAnimationType('slideInUp');
+    }
+    navigate('generate');
   };
   const handleNavigateToTasks = () => {
-    setAnimationType('slideInRight');
+    if (isDesktop) setAnimationType('slideInRight');
+    else setAnimationType('slideInUp');
     navigate('/tasks');
   };
 
@@ -49,12 +55,14 @@ export const Home: React.FC = () => {
       aria-labelledby="welcome-title" 
       sx={{
         display:'flex',
-        flexDirection:'row'
+        flexDirection: isDesktop ? 'row' : 'column',
+        justifyContent: !isDesktop && 'space-between',
+        height: !isDesktop && '60vh'
       }}
     >
       <Box 
         sx={{ 
-          p: 4, 
+          //p: 4, 
           textAlign: 'start',
           minHeight: 'inherit',
           display: 'flex',
@@ -87,16 +95,25 @@ export const Home: React.FC = () => {
           This is a tiny image generator built with React, FastAPI server and Stable Diffusion2.1
         </Typography>
       </Box>
-      <Divider aria-hidden="true" orientation="vertical" variant="middle" flexItem/>
+      <Divider 
+        aria-hidden="true" 
+        orientation={isDesktop ? 'vertical':'horizontal'}
+        variant="middle" 
+        flexItem
+        sx={{
+          mx:isDesktop ? 10 : 0, 
+          my: isDesktop ? 0 : 10,
+        }}
+      />
       <Box
          sx={{ 
-          p: 4, 
+          //p: 4, 
           textAlign: 'start',
           minHeight: 'inherit',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'start',
-          alignItems: 'start',
+          alignItems: isDesktop ?  'start':'center',
           gap: 4,
           flexWrap: 'wrap'
         }}>

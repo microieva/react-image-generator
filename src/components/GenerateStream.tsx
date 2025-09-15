@@ -18,6 +18,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useCancellableGeneration } from '../hooks/useCancellableGeneration';
 import type { GenerationResult } from '../types/api';
+import { useDevice } from '../contexts/DeviceContext';
 
 const GenerateStream: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
@@ -26,6 +27,7 @@ const GenerateStream: React.FC = () => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true);
   const [animationClass, setAnimationClass] = useState<string>('');
   const [isExiting, setIsExisting] = useState(false);
+  const { isDesktop } = useDevice();
   
   const {
     getStream,
@@ -42,7 +44,14 @@ const GenerateStream: React.FC = () => {
 
   useEffect(()=> {
     setIsSubmitDisabled(loading || !prompt.trim());
+    if (isDesktop) setAnimationClass('animate__animated animate_fadeInRight');
+    else setAnimationClass('animate__animated animate_slideInDown');
   }, [loading, prompt]);
+
+   useEffect(()=> {
+    if (isDesktop) setAnimationClass('animate__animated animate_fadeOutRight');
+    else setAnimationClass('animate__animated animate_slideOutUp');
+  }, [isExiting]);
 
   useEffect(()=> { 
     id && prompt_str && setPrompt(prompt_str);
@@ -70,7 +79,6 @@ const GenerateStream: React.FC = () => {
   };
 
   const handleCancel = async () => {
-    setAnimationClass('animate__animated animate_fadeOutRight');
     setIsExisting(true);
     await cancel();
     setIsSubmitDisabled(false);
@@ -81,12 +89,10 @@ const GenerateStream: React.FC = () => {
   };
 
   const handleReset = () => {
-    setAnimationClass('animate__animated animate_fadeOutRight');
     setIsExisting(true);
     resetGeneration();
     setPrompt('');
     setGeneratedImage(null);
-    //setAnimationClass('');
     setIsExisting(false);
   };
 
@@ -108,44 +114,56 @@ const GenerateStream: React.FC = () => {
       aria-label="Generate section"
       aria-labelledby="generate-title" 
       sx={{
-        display:'flex', 
-        flexDirection:'row', 
+        paddingY:0,
+        display: 'flex', 
+        flexDirection: isDesktop ? 'row' : 'column-reverse',
         transition: 'all 0.5s ease-in-out',
         margin: 'auto',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        height: isDesktop ? '60vh' : '85vh',
+        justifyContent: !isDesktop && 'space-between'
       }}
     >
-      <Paper 
+      <Box 
         sx={{ 
           display: 'flex',
           flexDirection: 'column',
-          maxWidth:'60vw',
+          justifyContent: 'center',
           m: 'auto', 
-          flex: loading && !isExiting ? 1 : 2, 
-          transition: 'flex 0.5s ease-in-out',
+          maxWidth: isDesktop ? '60vw' : '80vw',
+          minWidth: '35vw',
+          minHeight:'42vh',
+          flex: loading && !isExiting ? 2 : 1, 
+          transition: 'all 0.5s ease-in-out',
         }} 
         data-testid="generate-paper"
         aria-describedby="generate-description" 
         aria-live="polite"
       >
-        <Typography 
-          variant="h4" 
-          component="h1" 
-          gutterBottom
-          data-testid="generate-title"
-          id="generate-title" 
+        <Box 
+          display="flex" 
+          flexDirection='column'
+          sx={{opacity: loading || error || generatedImage ? 0.6 : 1, transition: 'opacity 0.5s ease-in-out',}}
         >
-          Image Generator
-        </Typography>
-        <Typography 
-          variant="body1" 
-          sx={{ mb: 3 }}
-          data-testid="generate-description"
-          id="generate-description" 
-          aria-live="polite" 
-        >
-          Welcome! This is your dedicated space for content generation.
-        </Typography>
+          <Typography 
+            variant="h4" 
+            component="h1" 
+            gutterBottom
+            data-testid="generate-title"
+            id="generate-title" 
+          >
+            Image Generator
+          </Typography>
+          <Typography 
+            variant="body1" 
+            sx={{ mb: 3 }}
+            data-testid="generate-description"
+            id="generate-description" 
+            aria-live="polite" 
+          >
+            Welcome! This is your dedicated space for content generation.
+          </Typography>
+        </Box>
         
         <form onSubmit={handleSubmit}>
           <TextField
@@ -155,7 +173,7 @@ const GenerateStream: React.FC = () => {
             onChange={(e) => setPrompt(e.target.value)}
             fullWidth
             margin="normal"
-            disabled={loading || Boolean(generatedImage)}
+            disabled={Boolean(error) || loading || Boolean(generatedImage)}
             multiline
             rows={3}
             role="textbox"
@@ -175,24 +193,29 @@ const GenerateStream: React.FC = () => {
             display: 'flex', 
             gap: 2, 
             mt: 2, 
-            flexDirection: { xs: 'column', sm: 'row' } }}
+            flexDirection: 'row' }}
           >
-            {!error && !generatedImage && <Button
-              type="submit"
-              variant="contained"
-              sx={{minWidth:'50%'}}
-              disabled={isSubmitDisabled}
-              fullWidth
-              data-testid="generate-submit-button"
-              aria-label="Start generation"
-              role="button"
-              aria-describedby="generate-description" 
-            >
-              {loading ? `${status}...` : 'Generate Image'}
-            </Button>}
+            {!error && !generatedImage && 
+              <Button
+                size="small"
+                type="submit"
+                variant="contained"
+                sx={{
+                  minWidth:'50%'
+                }}
+                disabled={isSubmitDisabled}
+                fullWidth
+                data-testid="generate-submit-button"
+                aria-label="Start generation"
+                role="button"
+                aria-describedby="generate-description" 
+              >
+                {loading ? `${status}...` : 'Generate Image'}
+              </Button>}
             {!error && generatedImage && 
               <>
                 <Button 
+                  size='small'
                   fullWidth
                   onClick={handleReset}
                   sx={{minWidth:'50%'}}
@@ -206,10 +229,15 @@ const GenerateStream: React.FC = () => {
                   Generate New
                 </Button>
                 <Button 
+                  fullWidth
+                  size='small'
                   onClick={handleDownload}
+                  aria-label="Download generated image"
+                  data-testid="generate-download-button"
+                  aria-describedby="generate-description" 
                   variant="contained"
+                  role="button"
                   startIcon={<DownloadIcon />}
-                  sx={{ flex: { xs: 1, sm: 'none' } }}
                 >
                   Download Image
                 </Button>
@@ -218,6 +246,7 @@ const GenerateStream: React.FC = () => {
             {loading &&
               <Button
                 className={isExiting ? animationClass : undefined}
+                size="small"
                 variant="outlined"
                 sx={{maxWidth:'50%'}}
                 data-testid="generate-cancel-button"
@@ -242,17 +271,18 @@ const GenerateStream: React.FC = () => {
                 type="submit"
                 role="button"
                 variant="outlined"
+                size="small"
                 data-testid="generate-retry-button"
                 aria-describedby="generate-description" 
                 color="error"
-                onClick={handleSubmit}
+                onClick={handleReset}
                 startIcon={<ReplayIcon />}
                 fullWidth
                 aria-label="Retry generation"
                 tabIndex={0}
                 onKeyUp={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey && !isSubmitDisabled) {
-                    handleSubmit(e);
+                    handleReset();
                   }
                 }}
               >
@@ -260,73 +290,87 @@ const GenerateStream: React.FC = () => {
               </Button> }
           </Box>
         </form>
-      </Paper>
-
-      {loading && (<>
-        <Divider 
-          aria-hidden="true" 
-          orientation="vertical" 
-          variant="middle" 
-          flexItem 
-          sx={{
-            mx:10,  
-            //opacity: loading && !isExiting ? 1 : 0,
-            display: loading && !isExiting ? 'block' : 'none',
-            transition: 'display 0.4s ease-in-out'
-          }}
-        />
-        <Box 
-          className={isExiting ? animationClass : undefined} 
-          sx={{ 
-            display: 'flex',
-            alignItems: 'center',
-            flex: isExiting ? 0 : 1,
-            opacity: isExiting ? 0 : 1,
-            minWidth: 0,
-            transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
-            overflow: 'hidden',
-          }}
-        >
-          <Paper 
-            sx={{  
+      </Box>
+     
+      {loading && (
+        <>
+           <Divider 
+              aria-hidden="true" 
+              orientation={isDesktop ? "vertical" : "horizontal"}
+              variant="middle"
+              flexItem 
+              sx={{
+                mx: isDesktop ? 10 : 0, 
+                display: !isExiting ? 'block' : 'none',
+                transition: 'display 0.5s ease-in-out'
+              }}
+            />
+          <Box 
+            className={animationClass}
+            sx={{ 
               display: 'flex',
-              flexDirection:'column',
-              flex: 1,
+              alignItems: 'center',
+              opacity: isExiting ? 0 : 1,
+              minWidth: 0,
+              flex: !isExiting ? 2 : 1, 
+              width: !isDesktop && '80%',
+              transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
+              overflow: 'hidden',
+              m:'auto'
             }}
           >
-              <Typography variant="body2" gutterBottom>
-                Generating your image, please wait...
-              </Typography>
-              <LinearProgress 
-                role="progress-bar"
-                variant="determinate" 
-                value={progress} 
-                sx={{ height: 8, borderRadius: 4 }}
-                aria-valuenow={progress}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                data-testid="progress-bar"
-                data-cy="progress-bar"
-              />
-              <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-                {progress}% complete
-              </Typography>
-          </Paper>
-        </Box>
-      </>
+            <Paper 
+              sx={{  
+                display: 'flex',
+                flexDirection:'column',
+                flex: 1
+              }}
+            >
+                <Typography variant="body2" gutterBottom>
+                  Generating your image, please wait...
+                </Typography>
+                <LinearProgress 
+                  role="progress-bar"
+                  variant="determinate" 
+                  value={progress} 
+                  sx={{ height: 8, borderRadius: 4 }}
+                  aria-valuenow={progress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  data-testid="progress-bar"
+                  data-cy="progress-bar"
+                /> 
+                <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
+                  {progress}% complete
+                </Typography>
+            </Paper>
+          </Box>
+        </>
       )}
       {error && !generatedImage && (
         <>
-          <Divider aria-hidden="true" orientation="vertical" variant="middle" flexItem sx={{mx:10}}/>
+           <Divider 
+              aria-hidden="true" 
+              orientation={isDesktop ? "vertical" : "horizontal"}
+              variant={"middle"} 
+              flexItem 
+              sx={{
+                mx: isDesktop ? 10 : 0, 
+                display: !isExiting ? 'block' : 'none',
+                transition: 'display 0.4s ease-in-out'
+              }}
+            />
           <Box 
             className={isExiting ? animationClass : undefined} 
             sx={{ 
               display: 'flex',
               alignItems: 'center',
-              flex: isExiting ? 0 : 1,
+              justifyContent:'center',
+              flex: !isExiting ? 1 : 2, 
               opacity: isExiting ? 0 : 1,
-              //minWidth: 0,
-              width:'50vw',
+              margin:'auto',
+              width:'auto',
+              height: !isDesktop ? '50vh':'inherit',
               transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
               overflow: 'hidden',
             }}
@@ -337,84 +381,62 @@ const GenerateStream: React.FC = () => {
           </Box>
         </>
       )}
-
-      {cancelled && (
+      {status === 'completed' && !error && (
         <>
           <Divider 
             aria-hidden="true" 
-            orientation="vertical" 
-            variant="middle" 
+            orientation={isDesktop ? "vertical" : "horizontal"}
+            variant={"middle"} 
             flexItem 
             sx={{
-              mx:10, 
-              opacity: loading ? 1 : 0,
-              transition: 'opacity 0.6s ease-in-out'
+              mx: isDesktop ? 10 : 0, 
+              display: !isExiting ? 'block' : 'none',
+              transition: 'display 0.4s ease-in-out'
             }}
           />
-          <Paper 
-            elevation={3} 
-            sx={{
-              m: 'auto', 
-              width:'50vw', 
-              //flex: loading ? 1/2 : 0,
-              // minWidth: 0,
-              // transition: 'flex 0.5s ease-in-out, width 0.5s ease-in-out',
-              // opacity: loading ? 1 : 0,
-              // overflow: 'hidden'
-            }} 
-          > 
-            <Alert severity="info" sx={{ mt: 2 }} role="info" data-testid="info">
-              Generation was cancelled. You can start a new one.
-            </Alert>
-          </Paper>
-        </>
-      )}
-
-      {status === 'completed' && !error && (
-        <>
-          <Divider aria-hidden="true" orientation="vertical" variant="middle" flexItem sx={{mx:10}}/>
-          <Paper 
-            elevation={3} 
+          <Box 
+            className={isExiting ? animationClass : undefined}  
             sx={{ 
-              m:'auto', 
-              width:'50vw', 
-              flex: isExiting ? 0 : 1,
+              display:'flex',
+              flexDirection:'column',
+              flex: isExiting ? 1 : 2, 
               opacity: isExiting ? 0 : 1,
-              minWidth: 0,
+              minWidth: '50%',
               transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
               overflow: 'hidden'
             }} 
-            className={isExiting ? animationClass : undefined} >  
+          >
             <Box sx={{ 
               display: 'flex', 
               justifyContent: 'center',
               borderRadius: 2,
               flex: isExiting ? 0 : 1,
               opacity: isExiting ? 0 : 1,
-              minWidth: 0,
+              m:'auto',
+              maxHeight: !isDesktop ? '35vh' : '50vh',
               transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
               overflow: 'hidden',
             }}>
               {!generatedImage && <CircularProgress/>}
 
-              {generatedImage && <img 
+            {generatedImage && 
+              <img 
                 src={generatedImage} 
-                alt="Generated" 
+                alt="Generated image" 
                 className = "animate__animated animated__pulse"
                 style={{ 
-                  width: 'auto', 
-                  height: '60vh',
                   objectFit: 'contain',
                   borderRadius:5
                 }} 
-              />}
+              />
+              }
             </Box>  
             {generatedImage && 
               <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary', textAlign: 'center' }}>
                 Prompt: {prompt}
               </Typography>
             }
-          </Paper>
+          </Box>
         </>
       )}
     </Container>
