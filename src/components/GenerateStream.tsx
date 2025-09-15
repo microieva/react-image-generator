@@ -121,7 +121,7 @@ const GenerateStream: React.FC = () => {
         margin: 'auto',
         overflow: 'hidden',
         height: isDesktop ? '60vh' : '85vh',
-        justifyContent: !isDesktop && 'space-between'
+        justifyContent: isDesktop ? 'inherit':'space-between'
       }}
     >
       <Box 
@@ -313,7 +313,7 @@ const GenerateStream: React.FC = () => {
               opacity: isExiting ? 0 : 1,
               minWidth: 0,
               flex: !isExiting ? 2 : 1, 
-              width: !isDesktop && '80%',
+              width: isDesktop ? 'auto' :'80%',
               transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
               overflow: 'hidden',
               m:'auto'

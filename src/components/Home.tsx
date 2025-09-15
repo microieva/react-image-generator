@@ -56,13 +56,12 @@ export const Home: React.FC = () => {
       sx={{
         display:'flex',
         flexDirection: isDesktop ? 'row' : 'column',
-        justifyContent: !isDesktop && 'space-between',
-        height: !isDesktop && '60vh'
+        justifyContent: isDesktop ? 'inherit' : 'space-between',
+        height: isDesktop ? 'auto' : '60vh'
       }}
     >
       <Box 
         sx={{ 
-          //p: 4, 
           textAlign: 'start',
           minHeight: 'inherit',
           display: 'flex',
