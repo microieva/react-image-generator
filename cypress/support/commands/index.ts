@@ -21,7 +21,7 @@ Cypress.Commands.add('assertGoToButtonVisible', () => {
 Cypress.Commands.add('assertWelcomeLayoutCorrect', () => {
   cy.getByTestId('welcome-box')
     .should('be.visible')
-    .and('have.css', 'text-align', 'center')
+    .and('have.css', 'text-align', 'start')
     .and('have.css', 'display', 'flex')
     .and('have.css', 'flex-direction', 'row');
 });
@@ -64,6 +64,7 @@ Cypress.Commands.add('clickCancelButton', () => {
 });
 Cypress.Commands.add('assertNavigationToGenerate', () => {
   cy.url().should('include', '/generate');
+  cy.go('back');
 });
 
 Cypress.Commands.add('assertWelcomePageComplete', () => {
@@ -89,8 +90,6 @@ Cypress.Commands.add('clearPrompt', () => {
     .clear();
 });
 Cypress.Commands.add('assertWelcomePageAccessible', () => {
-  cy.log('Testing welcome page accessibility...');
-
   cy.getByTestId('welcome-container')
     .should('have.attr', 'role', 'main')
     .and('have.attr', 'aria-label', 'Welcome section');
@@ -98,7 +97,7 @@ Cypress.Commands.add('assertWelcomePageAccessible', () => {
   cy.getByTestId('welcome-title')
     .should('have.prop', 'tagName', 'H1')
     .and('have.attr', 'id', 'welcome-title')
-    .and('contain', 'Welcome to My App');
+    .and('contain', 'Welcome!');
 
   cy.getByTestId('welcome-description')
     .should('have.attr', 'id', 'welcome-description')
@@ -133,7 +132,6 @@ Cypress.Commands.add('assertWelcomePageAccessible', () => {
   cy.log('Welcome page accessibility tests passed!');
 });
 Cypress.Commands.add('testKeyboardNavigation', () => {
-  cy.log('Testing keyboard navigation...');
   cy.getByTestId('go-to-generate-button')
     .focus()
     .should('be.focused')

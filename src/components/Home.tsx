@@ -180,8 +180,8 @@ export const Home: React.FC = () => {
           size="small"
           variant="contained"
           onClick={handleNavigateToImages}
-          data-testid="go-to-tasks-button"
-          aria-label="Go to running tasks page" 
+          data-testid="go-to-images-button"
+          aria-label="Go to today's images page" 
           aria-describedby="welcome-description" 
           role="button" 
           tabIndex={0} 

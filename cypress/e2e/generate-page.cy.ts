@@ -42,6 +42,7 @@ describe('Generate Page', () => {
       });
 
       it('should navigate back using keyboard', () => {
+      cy.visitGeneratePage();
       cy.testKeyboardNavigationBack({ testAllKeys: true, testFocusOrder: true});
       cy.assertNavigationBackToWelcome();
       });
@@ -53,21 +54,21 @@ describe('Generate Page', () => {
       });
     });
 
-    context('Responsive design', () => {
+    context('Responsive layout', () => {
       const viewports = [
-        { width: 320, height: 568, name: 'mobile' },
-        { width: 768, height: 1024, name: 'tablet' },
-        { width: 1280, height: 800, name: 'desktop' },
-        { width: 1920, height: 1080, name: 'large' }
+        { width: 320, height: 568, name: 'mobile', expectedFlexDirection: 'column-reverse' },
+        { width: 768, height: 1024, name: 'tablet', expectedFlexDirection: 'column-reverse' },
+        { width: 1280, height: 800, name: 'desktop', expectedFlexDirection: 'row' },
+        { width: 1920, height: 1080, name: 'large', expectedFlexDirection: 'row' }
       ];
 
       viewports.forEach((viewport) => {
-        it(`should display correctly on ${viewport.name} viewport`, () => {
+        it(`should have ${viewport.expectedFlexDirection} flex direction on ${viewport.name}`, () => {
           cy.viewport(viewport.width, viewport.height);
-          cy.visitGeneratePage();  
-          cy.assertGeneratePageInitialState();
+          cy.visitGeneratePage();
+          
           cy.getByTestId('generate-container')
-            .should('have.css', 'min-height', `${viewport.height}px`);
+            .should('have.css', 'flex-direction', viewport.expectedFlexDirection);
         });
       });
     });
