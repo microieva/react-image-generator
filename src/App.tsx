@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import GenerateStream from './components/GenerateStream';
 import { Tasks } from './components/Tasks';
+import { Images } from './components/Images';
 import { Home } from './components/Home';
 import Layout from './components/Layout';
 import AnimatedPage from './components/AnimatedPage';
@@ -32,6 +33,11 @@ export const App: React.FC = () => {
           <Route path="/tasks" element={
             <AnimatedPage>
               <Tasks />
+            </AnimatedPage>
+          } />
+           <Route path="/images" element={
+            <AnimatedPage>
+              <Images />
             </AnimatedPage>
           } />
         </Routes>

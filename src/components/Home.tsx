@@ -7,6 +7,7 @@ import { useDevice } from "../contexts/DeviceContext";
 
 export const Home: React.FC = () => {
   const [isTasks, setIsTasks] = useState<boolean>(false);
+  const [isImages, setIsImages] = useState<boolean>(false);
   const [animationClass, setAnimationClass] = useState<string>('');
   const navigate = useNavigate();
   const { setAnimationType } = useAnimation();
@@ -29,7 +30,24 @@ export const Home: React.FC = () => {
         setIsTasks(false); 
       } 
     };
+    const fetchImageTotal = async () => {
+      try {
+        const response = await fetch(`${env.apiBaseUrl}/images`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }        
+        const data = await response.json();
+        const hasImages = data.length > 0;
+        setAnimationClass("animate__animated animate__tada")
+        setIsImages(hasImages);
+      } catch (err) {
+        console.error('Unexpected error checking if there are saved images.. ', err)
+        setIsImages(false); 
+      } 
+    };
     fetchTaskTotal();
+    fetchImageTotal();
   }, []); 
 
   const handleNavigateToGenerate = () => {
@@ -43,6 +61,11 @@ export const Home: React.FC = () => {
     if (isDesktop) setAnimationType('slideInRight');
     else setAnimationType('slideInUp');
     navigate('/tasks');
+  };
+   const handleNavigateToImages = () => {
+    if (isDesktop) setAnimationType('slideInRight');
+    else setAnimationType('slideInUp');
+    navigate('/images');
   };
 
 
@@ -106,7 +129,6 @@ export const Home: React.FC = () => {
       />
       <Box
          sx={{ 
-          //p: 4, 
           textAlign: 'start',
           minHeight: 'inherit',
           display: 'flex',
@@ -152,6 +174,25 @@ export const Home: React.FC = () => {
             }}
           >
             Go to Tasks
+        </Button>}
+        {isImages && <Button
+          className={animationClass}
+          size="small"
+          variant="contained"
+          onClick={handleNavigateToImages}
+          data-testid="go-to-tasks-button"
+          aria-label="Go to running tasks page" 
+          aria-describedby="welcome-description" 
+          role="button" 
+          tabIndex={0} 
+          onKeyUp={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleNavigateToImages();
+            }
+            }}
+          >
+            Today's Images
         </Button>}
       </Box>
     </Container>

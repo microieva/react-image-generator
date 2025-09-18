@@ -21,14 +21,15 @@ export const Header: React.FC = () => {
   const handleGoBack = () => {
     if (location.pathname.endsWith('tasks') || 
         location.pathname.endsWith('generate-stream') || 
-        location.pathname.endsWith('generate')) 
+        location.pathname.endsWith('generate') ||
+        location.pathname.endsWith('images'))
     {
       if (isDesktop) setAnimationType('slideInLeft');
       else setAnimationType('slideInDown');
       navigate('/');
 
     } else {
-      if (isDesktop) setAnimationType('slideOutRight');
+      if (isDesktop) setAnimationType('fadeIn');
       else setAnimationType('fadeIn');
       navigate('/tasks');
     }
