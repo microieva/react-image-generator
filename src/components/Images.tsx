@@ -86,6 +86,7 @@ export const Images: React.FC = () => {
                   loading="lazy"
                   style={{borderRadius:5}} 
                 />
+                {image.image_url && 
                 <ImageListItemBar
                   title="Prompt text:"
                   subtitle={<span style={{color:'darkgray'}}>{image.prompt}</span>}
@@ -102,7 +103,7 @@ export const Images: React.FC = () => {
                     </Tooltip>
                   }
                   actionPosition="right"
-                />
+                />}
               </ImageListItem>
             ))}
           </ImageList>
