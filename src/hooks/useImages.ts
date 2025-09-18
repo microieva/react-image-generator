@@ -42,8 +42,6 @@ export const useImages = () => {
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
-      
-      // Create a filename from the prompt (first 20 chars, sanitized)
       const filename = `${prompt.slice(0, 20).replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`;
       
       link.href = url;
@@ -57,7 +55,7 @@ export const useImages = () => {
     }
   };
 
-  const changePage = (event: React.ChangeEvent<unknown>, page: number) => {
+  const changePage = ( page: number) => {
     setPagination(prev => ({ ...prev, page }));
   };
 
