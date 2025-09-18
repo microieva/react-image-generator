@@ -24,10 +24,15 @@ export const Images: React.FC = () => {
     pagination,
     totalImages,
     handleDownload,
-    handlePageChange
+    changePage
   } = useImages();
   const { isDesktop, isMobile } = useDevice();
   const totalPages = Math.ceil(totalImages / pagination.limit);
+
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
+    changePage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (loading) {
     return (
@@ -103,10 +108,12 @@ export const Images: React.FC = () => {
           </ImageList>
           <Box sx={{ display: isMobile ? 'none': 'flex', justifyContent: 'center' }}>
             <Pagination
-              count={totalPages}
+              count={totalPages} 
               page={pagination.page}
               onChange={handlePageChange}
               size="large"
+              showFirstButton
+              showLastButton
             />
           </Box>
         </>

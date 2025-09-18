@@ -7,10 +7,7 @@ export const useImages = () => {
   const [images, setImages] = useState<ImageItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<ImagesPagination>({
-    page: 1,
-    limit: 12
-  });
+  const [pagination, setPagination] = useState<ImagesPagination>({page: 1, limit: 12});
   const [totalImages, setTotalImages] = useState<number>(0);
 
   const fetchImages = useCallback(async () => {
@@ -63,6 +60,10 @@ export const useImages = () => {
     fetchImages();
   }, [fetchImages]);
 
+  useEffect(() => {
+    fetchImages();
+  }, [pagination.page, pagination.limit]);
+
   return {
     images,
     loading,
@@ -70,7 +71,7 @@ export const useImages = () => {
     pagination,
     totalImages,
     handleDownload: downloadImage,
-    handlePageChange: changePage,
+    changePage,
     refetch: fetchImages
   };
 };
