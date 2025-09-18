@@ -95,7 +95,7 @@ const TaskRow = React.memo(({
       </TableCell>
       <TableCell align="left">
         <Box display="flex" alignItems="center" gap={1}>
-          <Box width="100%" mr={1}>
+          <Box width="30%" mr={1}>
             <CircularProgress 
               variant="determinate" 
               value={task.status !== 'completed' ? task.progress : 100} 
