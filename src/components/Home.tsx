@@ -14,40 +14,38 @@ export const Home: React.FC = () => {
   const { isDesktop } = useDevice();
 
   useEffect(() => {
-    const fetchTaskTotal = async () => {
+    const fetchTotals = async () => {
       try {
-        const response = await fetch(`${env.apiBaseUrl}/tasks`);
+        const [tasksResponse, imagesResponse] = await Promise.all([
+          fetch(`${env.apiBaseUrl}/tasks`),
+          fetch(`${env.apiBaseUrl}/images`)
+        ]);
+
+        if (!tasksResponse.ok) {
+          throw new Error(`Tasks HTTP error! status: ${tasksResponse.status}`);
+        }
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }        
-        const data = await response.json();
-        const hasTasks = data.total_tasks > 0;
-        setAnimationClass("animate__animated animate__tada")
+        if (!imagesResponse.ok) {
+          throw new Error(`Images HTTP error! status: ${imagesResponse.status}`);
+        }
+
+        const [taskData, imageData] = await Promise.all([
+          tasksResponse.json(),
+          imagesResponse.json()
+        ]);
+
+        const hasTasks = taskData.total_tasks > 0;
+        const hasImages = imageData.length > 0;
+        
+        setAnimationClass("animate__animated animate__tada");
         setIsTasks(hasTasks);
-      } catch (err) {
-        console.error('Unexpected error checking if there are ongoing tasks.. ', err)
-        setIsTasks(false); 
-      } 
-    };
-    const fetchImageTotal = async () => {
-      try {
-        const response = await fetch(`${env.apiBaseUrl}/images`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }        
-        const data = await response.json();
-        const hasImages = data.length > 0;
-        setAnimationClass("animate__animated animate__tada")
         setIsImages(hasImages);
+        
       } catch (err) {
-        console.error('Unexpected error checking if there are saved images.. ', err)
-        setIsImages(false); 
-      } 
+        console.error('Error fetching data of totals:', err);
+      }
     };
-    fetchTaskTotal();
-    fetchImageTotal();
+    fetchTotals()
   }, []); 
 
   const handleNavigateToGenerate = () => {
