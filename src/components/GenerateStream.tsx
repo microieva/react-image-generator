@@ -161,7 +161,7 @@ const GenerateStream: React.FC = () => {
             id="generate-description" 
             aria-live="polite" 
           >
-            Welcome! This is your dedicated space for content generation.
+            Create a prompt describing your image and expect the unexpected! 
           </Typography>
         </Box>
         

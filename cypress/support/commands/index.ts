@@ -187,7 +187,7 @@ Cypress.Commands.add('assertWelcomeTitleCorrect', (expectedText = 'Welcome to My
     .and('have.prop', 'tagName', 'H1');
 });
 
-Cypress.Commands.add('assertGenerateDescriptionCorrect', (expectedText = 'Welcome! This is your dedicated space for content generation.') => {
+Cypress.Commands.add('assertGenerateDescriptionCorrect', (expectedText = 'Create a prompt describing your image and expect the unexpected! ') => {
   cy.getByTestId('generate-description')
     .should('be.visible')
     .and('contain', expectedText)

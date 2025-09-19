@@ -80,7 +80,7 @@ describe('Generate Page', () => {
 
       it('should display exact description text', () => {
         cy.assertGenerateDescriptionCorrect(
-          'Welcome! This is your dedicated space for content generation.'
+          'Create a prompt describing your image and expect the unexpected! '
         );
       });
 

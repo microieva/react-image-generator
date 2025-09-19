@@ -14,7 +14,7 @@ const AnimatedPage: React.FC<AnimatedPageProps> = ({ children }) => {
   }, []);
 
   return (
-    <div className={`animation ${animationClass}`.trim()}>
+    <div className={`${animationClass}`.trim()}>
       {children}
     </div>
   );
