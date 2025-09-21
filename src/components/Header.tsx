@@ -2,7 +2,7 @@ import { AppBar, Toolbar, Box, Button } from "@mui/material"
 import ThemeToggle from "./ThemeToggle"
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAnimation } from "../contexts/AnimationContext";
 import { useDevice } from "../contexts/DeviceContext";
 
@@ -18,22 +18,28 @@ export const Header: React.FC = () => {
     setIsHomeRoute(location.pathname === '/')
   })
 
-  const handleGoBack = () => {
-    if (location.pathname.endsWith('tasks') || 
-        location.pathname.endsWith('generate-stream') || 
-        location.pathname.endsWith('generate') ||
-        location.pathname.endsWith('images'))
-    {
-      if (isDesktop) setAnimationType('slideInLeft');
-      else setAnimationType('slideInDown');
-      navigate('/');
+const handleGoBack = useCallback(() => {
+  const isTaskIdRoute = /\/tasks\/[^/]+$/.test(location.pathname);
 
-    } else {
-      if (isDesktop) setAnimationType('fadeIn');
-      else setAnimationType('fadeIn');
-      navigate('/tasks');
-    }
-  };
+  const homeRoutes = [
+    '/tasks',
+    '/generate-stream', 
+    '/generate',
+    '/images'
+  ];
+  
+  const isHomeRoute = homeRoutes.includes(location.pathname);
+
+  if (isHomeRoute || isTaskIdRoute) {
+    if (isDesktop) setAnimationType('slideInLeft');
+    else setAnimationType('slideInDown');
+    navigate('/');
+  } else {
+    if (isDesktop) setAnimationType('fadeIn');
+    else setAnimationType('fadeIn');
+    navigate('/tasks');
+  }
+}, [location.pathname, isDesktop, navigate]);
 
   return (
     <AppBar 

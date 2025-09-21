@@ -15,7 +15,7 @@ interface AnimationProviderProps {
 
 export const AnimationProvider: React.FC<AnimationProviderProps> = ({ 
   children, 
-  defaultAnimation = '' 
+  defaultAnimation = 'fadeIn' 
 }) => {
   const [animationType, setAnimationType] = useState(defaultAnimation);
 

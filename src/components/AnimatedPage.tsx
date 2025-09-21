@@ -7,7 +7,7 @@ interface AnimatedPageProps {
 
 const AnimatedPage: React.FC<AnimatedPageProps> = ({ children }) => {
   const { getAnimationClass } = useAnimation();
-  const [animationClass, setAnimationClass] = useState<string>('');
+  const [animationClass, setAnimationClass] = useState<string>('fadeIn');
 
   useEffect(() => {
     setAnimationClass(getAnimationClass());
