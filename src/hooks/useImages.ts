@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { ImageItem, ImagesPagination, ImagesResponse } from '../types/images';
-import env from '../utils/env';
 
 export const useImages = () => {
   const [images, setImages] = useState<ImageItem[]>([]);
@@ -15,7 +14,7 @@ export const useImages = () => {
     setError(null);
     
     try {
-      const response = await axios.get<ImagesResponse>(`${env.apiBaseUrl}/images`, {
+      const response = await axios.get<ImagesResponse>(`/images`, {
         params: {
           page: pagination.page,
           limit: pagination.limit

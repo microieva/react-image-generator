@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAnimation } from '../contexts/AnimationContext';
 import { Task, TaskProgress, TasksState } from '../types/api';
-import env from '../utils/env';
+//import env from '../utils/env';
 
 export const useTasks = () => {
   const [state, setState] = useState<TasksState>({
@@ -29,7 +29,7 @@ export const useTasks = () => {
       existingStream.close();
     }
 
-    const eventSource = new EventSource(`${env.apiBaseUrl}/generate-stream/${taskId}`);
+    const eventSource = new EventSource(`/generate-stream/${taskId}`);
     
     eventSource.onmessage = (event) => {
       try {
@@ -60,12 +60,12 @@ export const useTasks = () => {
     };
 
     progressStreamsRef.current.set(taskId, eventSource);
-  }, [env.apiBaseUrl]);
+  }, []);
 
   const fetchTasks = useCallback(async () => {
     try {
       updateState({ error: null, deletionError: null });
-      const response = await axios.get(`${env.apiBaseUrl}/tasks`);
+      const response = await axios.get(`/tasks`);
       
       if (response.status !== 200) {
         throw new Error(`Failed to fetch tasks: ${response.status} ${response.statusText}`);
@@ -106,7 +106,7 @@ export const useTasks = () => {
     try {
       updateState({ cancellingIds: [...state.cancellingIds, taskId] });
       
-      const response = await axios.post(`${env.apiBaseUrl}/cancel-generation`, { 
+      const response = await axios.post(`/cancel-generation`, { 
         task_id: taskId
       });
       
@@ -136,7 +136,7 @@ export const useTasks = () => {
         cancellingIds: prev.cancellingIds.filter(id => id !== taskId)
       }));
     }
-  }, [env.apiBaseUrl, state.cancellingIds, updateState]);
+  }, [state.cancellingIds, updateState]);
 
   const refreshTaskProgress = useCallback((taskId: string, e?: React.MouseEvent) => {
     if (e) {
@@ -149,7 +149,7 @@ export const useTasks = () => {
     updateState({ isDeleting: true, deletionError: null });
     
     try {
-      const response = await axios.delete(`${env.apiBaseUrl}/delete-tasks`);
+      const response = await axios.delete(`/delete-tasks`);
       if (response.status !== 200) {
         throw new Error(`Failed to delete tasks: ${response.status} ${response.statusText}`);
       } 

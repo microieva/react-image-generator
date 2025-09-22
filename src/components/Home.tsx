@@ -1,5 +1,4 @@
 import { Container, Box, Typography, Button, Divider } from "@mui/material";
-import { env } from '../utils/env';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAnimation } from "../contexts/AnimationContext";
@@ -17,8 +16,8 @@ export const Home: React.FC = () => {
     const fetchTotals = async () => {
       try {
         const [tasksResponse, imagesResponse] = await Promise.all([
-          fetch(`${env.apiBaseUrl}/tasks`),
-          fetch(`${env.apiBaseUrl}/images`)
+          fetch(`/tasks`),
+          fetch(`/images`)
         ]);
 
         if (!tasksResponse.ok) {
