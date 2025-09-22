@@ -1,8 +1,13 @@
 {
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://135.181.63.159:8000/:path*"
+      "source": "/(.*)",
+      "destination": "http://135.181.63.159:8000/$1"
     }
-  ]
+  ],
+  "functions": {
+    "**/*.html": {
+      "exclude": true
+    }
+  }
 }
