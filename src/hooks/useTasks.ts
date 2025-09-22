@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAnimation } from '../contexts/AnimationContext';
 import { Task, TaskProgress, TasksState } from '../types/api';
-//import env from '../utils/env';
 
 export const useTasks = () => {
   const [state, setState] = useState<TasksState>({

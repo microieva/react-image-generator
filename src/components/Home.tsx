@@ -77,7 +77,7 @@ export const Home: React.FC = () => {
         display:'flex',
         flexDirection: isDesktop ? 'row' : 'column',
         justifyContent: isDesktop ? 'inherit' : 'space-between',
-        height: isDesktop ? 'auto' : '60vh'
+        height: isDesktop ? 'auto' : '60dvh'
       }}
     >
       <Box 
