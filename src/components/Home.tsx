@@ -154,8 +154,9 @@ export const Home: React.FC = () => {
         >
           Go to Generate
         </Button>
-        {isTasks && <Button
-          className={animationClass}
+        <Button
+          sx={{visibility: isTasks ? 'visible' : 'hidden'}}
+          className={isTasks ? animationClass : ''}
           size="small"
           variant="contained"
           onClick={handleNavigateToTasks}
@@ -172,9 +173,10 @@ export const Home: React.FC = () => {
             }}
           >
             Go to Tasks
-        </Button>}
-        {isImages && <Button
-          className={animationClass}
+        </Button>
+        <Button
+          sx={{visibility: isImages ? 'visible' : 'hidden'}}
+          className={isImages ? animationClass : ''}
           size="small"
           variant="contained"
           onClick={handleNavigateToImages}
@@ -191,7 +193,7 @@ export const Home: React.FC = () => {
             }}
           >
             Today's Images
-        </Button>}
+        </Button>
       </Box>
     </Container>
   );
