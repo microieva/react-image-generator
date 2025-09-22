@@ -20,7 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       sx={{ 
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100dvh', 
+        minHeight: '100vh', 
       }}
     >
       <Header/>  

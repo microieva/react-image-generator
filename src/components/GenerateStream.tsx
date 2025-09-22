@@ -132,7 +132,7 @@ const GenerateStream: React.FC = () => {
           m: 'auto', 
           maxWidth: isDesktop ? '60vw' : '80vw',
           minWidth: '35vw',
-          minHeight:'42dvh',
+          minHeight:'42vh',
           flex: loading && !isExiting ? 2 : 1, 
           transition: 'all 0.5s ease-in-out',
         }} 
@@ -371,7 +371,7 @@ const GenerateStream: React.FC = () => {
               opacity: isExiting ? 0 : 1,
               margin:'auto',
               width:'auto',
-              height: !isDesktop ? '50dvh':'inherit',
+              height: !isDesktop ? '50vh':'inherit',
               transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
               overflow: 'hidden',
             }}
@@ -414,7 +414,7 @@ const GenerateStream: React.FC = () => {
               flex: isExiting ? 0 : 1,
               opacity: isExiting ? 0 : 1,
               m:'auto',
-              maxHeight: !isDesktop ? '35dvh' : '50dvh',
+              maxHeight: !isDesktop ? '35vh' : '50vh',
               transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
               overflow: 'hidden',
             }}>
