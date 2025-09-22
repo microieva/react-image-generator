@@ -55,6 +55,7 @@ const TaskRow = React.memo(({
 }) => {
   const isProcessing = task.status === 'processing';
   const isCancelling = cancellingIds.includes(task.taskId);
+  const { isMobile } = useDevice();
 
   return (
     <TableRow 
@@ -62,7 +63,7 @@ const TaskRow = React.memo(({
       onClick={isProcessing ? () => onNavigate(`/generate-stream/${task.taskId}`) : undefined}
       sx={{ cursor: isProcessing ? 'pointer' : 'default' }}
     >
-      <TableCell 
+      {!isMobile && <TableCell 
         sx={{ 
           fontFamily: 'monospace', 
           maxWidth: 300, 
@@ -73,8 +74,8 @@ const TaskRow = React.memo(({
         align="left"
       >
         {task.taskId}
-      </TableCell>
-      <TableCell 
+      </TableCell>}
+      {!isMobile && <TableCell 
         align="left"
         sx={{ 
           maxWidth: 200, 
@@ -85,7 +86,7 @@ const TaskRow = React.memo(({
         title={task.prompt}
       >
         {task.prompt}
-      </TableCell>
+      </TableCell>}
       <TableCell align="left">
         <Chip 
           label={task.status} 
@@ -123,7 +124,7 @@ const TaskRow = React.memo(({
         </Box>
       </TableCell>
       <TableCell align="left">{formatDate(task.created_at)}</TableCell>
-      <TableCell align="right">
+      <TableCell align="right" sx={{px:0}}>
         {(task.status === 'processing' || task.status === 'pending') ? (
           <IconButton
             onClick={(e) => {
@@ -153,7 +154,7 @@ const TaskRow = React.memo(({
 TaskRow.displayName = 'TaskRow';
 
 export const Tasks: React.FC = () => {
-  const { isDesktop } = useDevice();
+  const { isDesktop, isMobile } = useDevice();
   const { tasks,
     loading,
     error,
@@ -166,6 +167,7 @@ export const Tasks: React.FC = () => {
     deleteTasks,
     handleNavigate 
   } = useTasks();
+  
 
   useEffect(() => {
     fetchTasks();
@@ -174,15 +176,15 @@ export const Tasks: React.FC = () => {
   const tableHeader = useMemo(() => (
     <TableHead>
       <TableRow>
-        <TableCell align="left">Task ID</TableCell>
-        <TableCell align="left">Prompt</TableCell>
+        {!isMobile && <TableCell align="left">Task ID</TableCell>}
+        {!isMobile && <TableCell align="left">Prompt</TableCell>}
         <TableCell align="left">Status</TableCell>
         <TableCell align="left">Progress</TableCell>
         <TableCell align="left">Created At</TableCell>
         <TableCell align="right">Actions</TableCell>
       </TableRow>
     </TableHead>
-  ), []);
+  ), [isMobile]);
 
   const tableRows = useMemo(() => {
     if (loading) {
@@ -215,7 +217,7 @@ export const Tasks: React.FC = () => {
         onNavigate={handleNavigate}
       />
     ));
-  }, [tasks, loading, error, cancellingIds, handleCancel, refreshTaskProgress, handleNavigate]);
+  }, [tasks, loading, error, cancellingIds, handleCancel, refreshTaskProgress, handleNavigate, isMobile]);
 
     if (loading){
       return (

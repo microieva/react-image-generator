@@ -151,7 +151,7 @@ const GenerateStream: React.FC = () => {
             gutterBottom
             data-testid="generate-title"
             id="generate-title" 
-            sx={{mb:'8rem'}}
+            sx={{mb:(!loading && !error && !generatedImage) ? '8rem':'inherit'}}
           >
             Image Generator
           </Typography>
