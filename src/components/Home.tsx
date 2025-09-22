@@ -17,8 +17,8 @@ export const Home: React.FC = () => {
     const fetchTotals = async () => {
       try {
         const [tasksResponse, imagesResponse] = await Promise.all([
-          fetch(`${env.apiBaseUrl}/tasks`),
-          fetch(`${env.apiBaseUrl}/images`)
+          fetch(`${env.apiBaseUrl}/api/tasks`),
+          fetch(`${env.apiBaseUrl}/api/images`)
         ]);
 
         if (!tasksResponse.ok) {

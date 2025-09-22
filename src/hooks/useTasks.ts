@@ -29,7 +29,7 @@ export const useTasks = () => {
       existingStream.close();
     }
 
-    const eventSource = new EventSource(`${env.apiBaseUrl}/generate-stream/${taskId}`);
+    const eventSource = new EventSource(`${env.apiBaseUrl}/api/generate-stream/${taskId}`);
     
     eventSource.onmessage = (event) => {
       try {
@@ -65,7 +65,7 @@ export const useTasks = () => {
   const fetchTasks = useCallback(async () => {
     try {
       updateState({ error: null, deletionError: null });
-      const response = await axios.get(`${env.apiBaseUrl}/tasks`);
+      const response = await axios.get(`${env.apiBaseUrl}/api/tasks`);
       
       if (response.status !== 200) {
         throw new Error(`Failed to fetch tasks: ${response.status} ${response.statusText}`);
@@ -106,7 +106,7 @@ export const useTasks = () => {
     try {
       updateState({ cancellingIds: [...state.cancellingIds, taskId] });
       
-      const response = await axios.post(`${env.apiBaseUrl}/cancel-generation`, { 
+      const response = await axios.post(`${env.apiBaseUrl}/api/cancel-generation`, { 
         task_id: taskId
       });
       
@@ -149,7 +149,7 @@ export const useTasks = () => {
     updateState({ isDeleting: true, deletionError: null });
     
     try {
-      const response = await axios.delete(`${env.apiBaseUrl}/delete-tasks`);
+      const response = await axios.delete(`${env.apiBaseUrl}/api/delete-tasks`);
       if (response.status !== 200) {
         throw new Error(`Failed to delete tasks: ${response.status} ${response.statusText}`);
       } 

@@ -42,7 +42,7 @@ export const useCancellableGeneration = (id?:string) => {
 
         try {
             const response = await axios.post(
-                `${env.apiBaseUrl}/generate`,
+                `${env.apiBaseUrl}/api/generate`,
                 { prompt},
                 {
                     cancelToken: cancelTokenSource.current.token
@@ -99,7 +99,7 @@ export const useCancellableGeneration = (id?:string) => {
 
         if (task_id) {
             return new Promise((resolve) => {      
-                eventSourceRef.current = new EventSource(`${env.apiBaseUrl}/generate-stream/${task_id}`);
+                eventSourceRef.current = new EventSource(`${env.apiBaseUrl}/api/generate-stream/${task_id}`);
     
                 eventSourceRef.current.onmessage = (event) => {
                     try {
@@ -175,7 +175,7 @@ export const useCancellableGeneration = (id?:string) => {
         }
 
         try {
-            const response = await axios.post(`${env.apiBaseUrl}/cancel-generation`, { 
+            const response = await axios.post(`${env.apiBaseUrl}/api/cancel-generation`, { 
                 task_id: state.taskId
             });
             if (response.status === 200 && response.data.status === 'success') {
@@ -221,7 +221,7 @@ export const useCancellableGeneration = (id?:string) => {
 
     const getProgress = useCallback(async () => {
         try {
-            const response:AxiosResponse<GenerationStatus> = await axios.get(`${env.apiBaseUrl}/status/${id}`);
+            const response:AxiosResponse<GenerationStatus> = await axios.get(`${env.apiBaseUrl}/api/status/${id}`);
 
             if (response.status === 200) {
                 setState(prev => ({ 
@@ -249,7 +249,7 @@ export const useCancellableGeneration = (id?:string) => {
     const getStream = useCallback(async()=> {
          if (id) {
             return new Promise<GenerationResult | null>((resolve) => {      
-                eventSourceRef.current = new EventSource(`${env.apiBaseUrl}/generate-stream/${id}`);
+                eventSourceRef.current = new EventSource(`${env.apiBaseUrl}/api/generate-stream/${id}`);
     
                 eventSourceRef.current.onmessage = (event) => {
                     try {
