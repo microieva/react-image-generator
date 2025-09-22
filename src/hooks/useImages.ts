@@ -15,7 +15,7 @@ export const useImages = () => {
     setError(null);
     
     try {
-      const response = await axios.get<ImagesResponse>(`${env.apiBaseUrl}/api/images`, {
+      const response = await axios.get<ImagesResponse>(`${env.apiBaseUrl}/images`, {
         params: {
           page: pagination.page,
           limit: pagination.limit
