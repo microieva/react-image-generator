@@ -23,7 +23,7 @@ export interface EnvironmentConfig {
 export const env: EnvironmentConfig = {
   appName: import.meta.env.VITE_APP_NAME || 'Image Generator',
   appVersion: import.meta.env.VITE_APP_VERSION || '1.0.0',
-  apiBaseUrl: import.meta.env.API_BASE_URL || 'http://127.0.0.1:8000',
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://135.181.63.159:8000',
   debugMode: import.meta.env.VITE_DEBUG_MODE === 'true',
   imageQuality: parseInt(import.meta.env.VITE_IMAGE_QUALITY || '90'),
   maxImages: parseInt(import.meta.env.VITE_MAX_IMAGES || '5'),
