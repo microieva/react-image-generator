@@ -1,0 +1,32 @@
+{
+  "rewrites": [
+    {
+      "source": "/generate",
+      "destination": "http://135.181.63.159:8000/generate"
+    },
+    {
+      "source": "/tasks",
+      "destination": "http://135.181.63.159:8000/tasks"
+    },
+    {
+      "source": "/images",
+      "destination": "http://135.181.63.159:8000/images"
+    },
+    {
+      "source": "/cancel-generation",
+      "destination": "http://135.181.63.159:8000/cancel-generation"
+    },
+    {
+      "source": "/delete-tasks",
+      "destination": "http://135.181.63.159:8000/delete-tasks"
+    },
+    {
+      "source": "/generate-stream/:path*",
+      "destination": "http://135.181.63.159:8000/generate-stream/:path*"
+    },
+    {
+      "source": "/status/:path*",
+      "destination": "http://135.181.63.159:8000/status/:path*"
+    }
+  ]
+}
