@@ -1,4 +1,4 @@
-import { Container, Box, Typography, Button, Divider } from "@mui/material";
+import { Container, Box, Typography, Button, Divider, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAnimation } from "../contexts/AnimationContext";
@@ -6,6 +6,7 @@ import { useDevice } from "../contexts/DeviceContext";
 import { apiClient } from "../config/api";
 
 export const Home: React.FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isTasks, setIsTasks] = useState<boolean>(false);
   const [isImages, setIsImages] = useState<boolean>(false);
   const [animationClass, setAnimationClass] = useState<string>('');
@@ -32,6 +33,8 @@ useEffect(() => {
       
     } catch (err) {
       console.error('Error fetching data of totals:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
   fetchTotals();
@@ -55,6 +58,13 @@ useEffect(() => {
     navigate('/images');
   };
 
+  if (isLoading) {
+    return (
+        <Container maxWidth="lg" sx={{ minHeight:'85vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <CircularProgress />
+        </Container>
+    ); 
+  }
 
   return (
     <Container 

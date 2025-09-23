@@ -60,6 +60,13 @@ export const lightTheme = createTheme({
         },
       },
     },
+       MuiCircularProgress: {
+      styleOverrides: {
+        root: {
+          color:'dimgray'
+        },
+      }
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -266,17 +273,9 @@ export const darkTheme = createTheme({
    MuiCircularProgress: {
       styleOverrides: {
         root: {
-
+          color:'dimgray'
         },
-      },
-      variants: [
-        // {
-        //   props: { variant: 'themed' }, 
-        //   style: {
-        //     color: 'white'
-        //   }
-        // }
-      ]
+      }
     },
     MuiTextField: {
       styleOverrides: {
