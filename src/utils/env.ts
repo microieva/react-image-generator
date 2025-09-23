@@ -4,7 +4,6 @@ export interface EnvironmentConfig {
   
   apiBaseUrl: string
   
-  // Feature flags
   debugMode: boolean
   
   imageQuality: number
@@ -12,7 +11,6 @@ export interface EnvironmentConfig {
   defaultWidth: number
   defaultHeight: number
   
-  // Environment detection
   isDevelopment: boolean
   isProduction: boolean
   isTest: boolean
