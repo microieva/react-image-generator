@@ -96,7 +96,7 @@ export const Images: React.FC = () => {
                       <IconButton
                         sx={{ color: 'inherit', mt:1 }}
                         aria-label={`download ${image.prompt}`}
-                        onClick={() => handleDownload(image.image_url, image.prompt)}
+                        onClick={() => handleDownload(image.image_url)}
                       >
                         <Download />
                       </IconButton>

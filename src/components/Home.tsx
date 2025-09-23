@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAnimation } from "../contexts/AnimationContext";
 import { useDevice } from "../contexts/DeviceContext";
+import { apiClient } from "../config/api";
 
 export const Home: React.FC = () => {
   const [isTasks, setIsTasks] = useState<boolean>(false);
@@ -12,40 +13,29 @@ export const Home: React.FC = () => {
   const { setAnimationType } = useAnimation();
   const { isDesktop } = useDevice();
 
-  useEffect(() => {
-    const fetchTotals = async () => {
-      try {
-        const [tasksResponse, imagesResponse] = await Promise.all([
-          fetch(`/tasks`),
-          fetch(`/images`)
-        ]);
+useEffect(() => {
+  const fetchTotals = async () => {
+    try {
+      const [tasksResponse, imagesResponse] = await Promise.all([
+        apiClient.get(`/tasks`),
+        apiClient.get(`/images`)
+      ]);
+      const taskData = tasksResponse.data;
+      const imageData = imagesResponse.data;
 
-        if (!tasksResponse.ok) {
-          throw new Error(`Tasks HTTP error! status: ${tasksResponse.status}`);
-        }
-        
-        if (!imagesResponse.ok) {
-          throw new Error(`Images HTTP error! status: ${imagesResponse.status}`);
-        }
-
-        const [taskData, imageData] = await Promise.all([
-          tasksResponse.json(),
-          imagesResponse.json()
-        ]);
-
-        const hasTasks = taskData.total_tasks > 0;
-        const hasImages = imageData.length > 0;
-        
-        setAnimationClass("animate__animated animate__tada");
-        setIsTasks(hasTasks);
-        setIsImages(hasImages);
-        
-      } catch (err) {
-        console.error('Error fetching data of totals:', err);
-      }
-    };
-    fetchTotals()
-  }, []); 
+      const hasTasks = taskData.total_tasks > 0;
+      const hasImages = imageData.length > 0;
+      
+      setAnimationClass("animate__animated animate__tada");
+      setIsTasks(hasTasks);
+      setIsImages(hasImages);
+      
+    } catch (err) {
+      console.error('Error fetching data of totals:', err);
+    }
+  };
+  fetchTotals();
+}, []);
 
   const handleNavigateToGenerate = () => {
     if (isDesktop) setAnimationType('slideInRight');

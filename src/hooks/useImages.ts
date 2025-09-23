@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import { ImageItem, ImagesPagination, ImagesResponse } from '../types/images';
+import { apiClient } from '../config/api';
 
 export const useImages = () => {
   const [images, setImages] = useState<ImageItem[]>([]);
@@ -14,7 +14,7 @@ export const useImages = () => {
     setError(null);
     
     try {
-      const response = await axios.get<ImagesResponse>(`/images`, {
+      const response = await apiClient.get<ImagesResponse>(`/images`, {
         params: {
           page: pagination.page,
           limit: pagination.limit
@@ -31,23 +31,15 @@ export const useImages = () => {
       setLoading(false);
     }
   }, [pagination.page, pagination.limit]);
-
-  const downloadImage = async (imageUrl: string, prompt: string) => {
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+  
+  const downloadImage = async (imageUrl: string) => {
+  if (imageUrl) {
       const link = document.createElement('a');
-      const filename = `${prompt.slice(0, 20).replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`;
-      
-      link.href = url;
-      link.download = filename;
+      link.href = imageUrl;
+      link.download = `generated-image-${Date.now()}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('Error downloading image:', err);
     }
   };
 

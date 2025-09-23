@@ -1,4 +1,6 @@
 :root {
+  margin-inline: auto;
+  max-width: 1640px;
   --animate-duration: 500ms;
   --animate-delay: 0.3s;
   --animate-repeat: 1;

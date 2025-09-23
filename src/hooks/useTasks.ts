@@ -1,8 +1,9 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useAnimation } from '../contexts/AnimationContext';
 import { Task, TaskProgress, TasksState } from '../types/api';
+import { apiClient } from '../config/api';
+import { createEventSource } from '../config/ess';
 
 export const useTasks = () => {
   const [state, setState] = useState<TasksState>({
@@ -28,7 +29,7 @@ export const useTasks = () => {
       existingStream.close();
     }
 
-    const eventSource = new EventSource(`/generate-stream/${taskId}`);
+    const eventSource = createEventSource(`/generate-stream/${taskId}`);
     
     eventSource.onmessage = (event) => {
       try {
@@ -64,7 +65,7 @@ export const useTasks = () => {
   const fetchTasks = useCallback(async () => {
     try {
       updateState({ error: null, deletionError: null });
-      const response = await axios.get(`/tasks`);
+      const response = await apiClient.get(`/tasks`);
       
       if (response.status !== 200) {
         throw new Error(`Failed to fetch tasks: ${response.status} ${response.statusText}`);
@@ -105,7 +106,7 @@ export const useTasks = () => {
     try {
       updateState({ cancellingIds: [...state.cancellingIds, taskId] });
       
-      const response = await axios.post(`/cancel-generation`, { 
+      const response = await apiClient.post(`/cancel-generation`, { 
         task_id: taskId
       });
       
@@ -148,7 +149,7 @@ export const useTasks = () => {
     updateState({ isDeleting: true, deletionError: null });
     
     try {
-      const response = await axios.delete(`/delete-tasks`);
+      const response = await apiClient.delete(`/delete-tasks`);
       if (response.status !== 200) {
         throw new Error(`Failed to delete tasks: ${response.status} ${response.statusText}`);
       } 
