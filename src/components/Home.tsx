@@ -154,7 +154,7 @@ useEffect(() => {
           Go to Generate
         </Button>
         <Button
-          sx={{visibility: isTasks ? 'visible' : 'visible'}}
+          sx={{visibility: isTasks ? 'visible' : 'hidden'}}
           className={isTasks ? animationClass : ''}
           size="small"
           variant="contained"
@@ -174,6 +174,7 @@ useEffect(() => {
             Go to Tasks
         </Button>
         <Button
+          sx={{visibility: isImages ? 'visible' : 'hidden'}}
           className={isImages ? animationClass : ''}
           size="small"
           variant="contained"
