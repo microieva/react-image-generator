@@ -76,8 +76,8 @@ useEffect(() => {
       sx={{
         display:'flex',
         flexDirection: isDesktop ? 'row' : 'column',
-        justifyContent: isDesktop ? 'inherit' : 'space-between',
-        height: isDesktop ? 'auto' : '60vh'
+        justifyContent: isDesktop ? 'inherit' : 'space-evenly',
+        height: isDesktop ? 'auto' : '88vh'
       }}
     >
       <Box 
@@ -106,7 +106,7 @@ useEffect(() => {
         
         <Typography 
           variant="body1" 
-          sx={{ mb: 4 }} 
+          //sx={{ mb: 4 }} 
           data-testid="welcome-description"
           id="welcome-description" 
           aria-live="polite" 
@@ -120,8 +120,8 @@ useEffect(() => {
         variant="middle" 
         flexItem
         sx={{
-          mx:isDesktop ? 10 : 0, 
-          my: isDesktop ? 0 : 10,
+          mx: isDesktop ? 10 : 0, 
+          my: isDesktop ? 0 : '1vh',
         }}
       />
       <Box
@@ -154,7 +154,7 @@ useEffect(() => {
           Go to Generate
         </Button>
         <Button
-          sx={{visibility: isTasks ? 'visible' : 'hidden'}}
+          sx={{visibility: isTasks ? 'visible' : 'visible'}}
           className={isTasks ? animationClass : ''}
           size="small"
           variant="contained"
@@ -174,7 +174,6 @@ useEffect(() => {
             Go to Tasks
         </Button>
         <Button
-          sx={{visibility: isImages ? 'visible' : 'hidden'}}
           className={isImages ? animationClass : ''}
           size="small"
           variant="contained"

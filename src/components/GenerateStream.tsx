@@ -27,7 +27,7 @@ const GenerateStream: React.FC = () => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true);
   const [animationClass, setAnimationClass] = useState<string>('');
   const [isExiting, setIsExisting] = useState(false);
-  const { isDesktop } = useDevice();
+  const { isDesktop, isMobile } = useDevice();
   
   const {
     getStream,
@@ -130,7 +130,7 @@ const GenerateStream: React.FC = () => {
           flexDirection: 'column',
           justifyContent: 'center',
           m: 'auto', 
-          maxWidth:'60%',
+          maxWidth:isMobile ? '95%': '60%',
           minHeight:'42vh',
           flex: loading && !isExiting ? 2 : 1, 
           transition: 'all 0.5s ease-in-out',
