@@ -315,7 +315,6 @@ const GenerateStream: React.FC = () => {
               opacity: isExiting ? 0 : 1,
               minWidth: 0,
               flex: !isExiting ? 2 : 1, 
-              width: isDesktop ? 'auto' :'80%',
               transition: 'flex 0.5s ease-out, opacity 0.5s ease-out',
               overflow: 'hidden',
               m:'auto'
