@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <Box 
       sx={{ 
-        height:'100vh',
+        minHeight:'100vh',
         display:'flex',
         flexDirection:'column'
       }}
