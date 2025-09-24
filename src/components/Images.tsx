@@ -26,7 +26,7 @@ export const Images: React.FC = () => {
     handleDownload,
     changePage
   } = useImages();
-  const { isDesktop, isMobile } = useDevice();
+  const { isMobile } = useDevice();
   const totalPages = Math.ceil(totalImages / pagination.limit);
 
   const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
@@ -76,19 +76,23 @@ export const Images: React.FC = () => {
         </Box>
       ) : (
         <>
-          <ImageList cols={isDesktop ? 2 : 1}>
+          <ImageList cols={isMobile ? 1 : 2}>
             {images.map((image) => (
-              <ImageListItem key={image.task_id}>
+              <ImageListItem key={image.task_id} sx={{maxWidth:isMobile ? '100vw':'45vw', height:isMobile ? 'auto':'45vw'}}>
                 <img
                   srcSet={image.image_url}
                   src={image.image_url}
                   alt={`Generated image with prompt: ${image.prompt}`}
                   loading="lazy"
-                  style={{borderRadius:5}} 
+                  style={{borderRadius:5, maxHeight:'max-content'}} 
                 />
                 {image.image_url && 
                 <ImageListItemBar
-                  sx={{maxWidth:'90%'}}
+                  sx={{
+                    '& .MuiImageListItemBar-subtitle': {
+                      whiteSpace: 'wrap'
+                    }
+                  }}
                   title="Prompt text:"
                   subtitle={
                     <span style={{
