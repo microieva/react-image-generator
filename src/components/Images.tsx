@@ -88,13 +88,11 @@ export const Images: React.FC = () => {
                 />
                 {image.image_url && 
                 <ImageListItemBar
+                  sx={{maxWidth:'90%'}}
                   title="Prompt text:"
                   subtitle={
                     <span style={{
-                      color: 'darkgray',
-                      maxWidth: '85%',
-                      wordWrap: 'break-word',
-                      overflowWrap: 'break-word'
+                      color: 'darkgray'
                     }}>
                       {image.prompt}
                     </span>
