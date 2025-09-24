@@ -89,7 +89,16 @@ export const Images: React.FC = () => {
                 {image.image_url && 
                 <ImageListItemBar
                   title="Prompt text:"
-                  subtitle={<span style={{color:'darkgray'}}>{image.prompt}</span>}
+                  subtitle={
+                    <span style={{
+                      color: 'darkgray',
+                      maxWidth: '85%',
+                      wordWrap: 'break-word',
+                      overflowWrap: 'break-word'
+                    }}>
+                      {image.prompt}
+                    </span>
+                  }
                   position="below"
                   actionIcon={
                     <Tooltip title="Download image" arrow>
