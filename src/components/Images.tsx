@@ -10,7 +10,8 @@ import {
   ImageList,
   ImageListItemBar,
   IconButton,
-  Tooltip
+  Tooltip,
+  Chip
 } from '@mui/material';
 import { Download } from '@mui/icons-material';
 import { useImages } from '../hooks/useImages';
@@ -62,10 +63,11 @@ export const Images: React.FC = () => {
           mb:4
         }}
       >
-      <Box  sx={{mt:4}}>
-        <Typography variant="h5" component="h4" gutterBottom sx={{ mb: 4 }}>
-          Today's images ({totalImages})
+      <Box  sx={{mt:4, display:'flex', flexDirection:'row', alignItems:'center', gap:4}}>
+        <Typography variant="h5" component="h4" gutterBottom sx={{mb:0}}>
+          Image Collection 
         </Typography>
+        <Chip label={totalImages} size="small" variant="outlined" sx={{minWidth:'2.1rem;'}}/>
       </Box>
 
       {images.length === 0 ? (

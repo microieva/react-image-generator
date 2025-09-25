@@ -191,7 +191,7 @@ useEffect(() => {
             }
             }}
           >
-            Today's Images
+            Go to Images
         </Button>
       </Box>
     </Container>
