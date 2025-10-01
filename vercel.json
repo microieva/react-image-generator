@@ -6,7 +6,7 @@
     },
     {
       "source": "/tasks",
-      "destination": "http://165.108.32.146:8000/tasks"
+      "destination": "http://65.108.32.146:8000/tasks"
     },
     {
       "source": "/images",
