@@ -2,31 +2,31 @@
   "rewrites": [
     {
       "source": "/generate",
-      "destination": "http://135.181.63.159:8000/generate"
+      "destination": "http://65.108.32.146:8000/generate"
     },
     {
       "source": "/tasks",
-      "destination": "http://135.181.63.159:8000/tasks"
+      "destination": "http://165.108.32.146:8000/tasks"
     },
     {
       "source": "/images",
-      "destination": "http://135.181.63.159:8000/images"
+      "destination": "http://65.108.32.146:8000/images"
     },
     {
       "source": "/cancel-generation",
-      "destination": "http://135.181.63.159:8000/cancel-generation"
+      "destination": "http://65.108.32.146:8000/cancel-generation"
     },
     {
       "source": "/delete-tasks",
-      "destination": "http://135.181.63.159:8000/delete-tasks"
+      "destination": "http://65.108.32.146:8000/delete-tasks"
     },
     {
       "source": "/generate-stream/:path*",
-      "destination": "http://135.181.63.159:8000/generate-stream/:path*"
+      "destination": "http://65.108.32.146:8000/generate-stream/:path*"
     },
     {
       "source": "/status/:path*",
-      "destination": "http://135.181.63.159:8000/status/:path*"
+      "destination": "http://65.108.32.146:8000/status/:path*"
     }
   ]
 }
